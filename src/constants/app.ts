@@ -1,0 +1,19 @@
+const APP_CONSTANTS = {
+  JWT: "JWT",
+  USER_ID: "USER_ID",
+  USER_NAME: "USER_NAME",
+  USER_ROLE: "USER_ROLE",
+  USER_MENU_FAVORITES: "USER_MENU_FAVORITES",
+  AUTO_MENU_HIDDEN: "AUTO_MENU_HIDDEN",
+  COMPANY_CODE: "COMPANY_CODE",
+  COMPANY_NAME: "COMPANY_NAME",
+  APPDOMAIN: "irs-dashboard",
+  APIUPLOAD: "https://file-api.erp-cloud.vn/files/upload",
+  KEYUPLOAD: "596h-32k4",
+  CONSTVALUE: {
+    DOMAIN: "irs-dashboard",
+    SECRETKEYAPIUPLOAD: "",
+  }
+};
+
+export default APP_CONSTANTS;

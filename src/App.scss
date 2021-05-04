@@ -1,0 +1,57 @@
+@import "./constants/variable.base.scss";
+.app {
+  display: flex;
+  font-size: $font-size-medium;
+  width: 100%;
+  height: 100%;
+  .main-app {
+    width: 100vw;
+    height: 100vh;
+    flex-direction: row;
+    display: flex;
+  }
+  #main-view {
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+  }
+}
+
+.dx-color-scheme-light {
+  .dx-header-filter {
+    color: #337ab7;
+  }
+  .dx-header-filter-empty {
+    color: rgba(124, 124, 124, 0.5);
+  }
+  .dx-header-row {
+    font-size: $font-size-large;
+    font-weight: bold;
+  }
+  .dx-header-row {
+    color: $main-dark;
+  }
+  .dx-overlay-shader {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+  }
+}
+.dx-color-scheme-dark {
+  .dx-header-filter {
+    color: rgb(28, 168, 221);
+  }
+  .dx-header-filter-empty {
+    color: rgba(124, 124, 124, 0.5);
+  }
+  .dx-header-row {
+    font-size: $font-size-large;
+    font-weight: bold;
+  }
+  .dx-header-row {
+    color: $white;
+  }
+  .dx-overlay-shader {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+}
