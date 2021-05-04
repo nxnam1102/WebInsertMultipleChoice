@@ -1,0 +1,63 @@
+//common color
+$main-color: #333333;
+$main-dark: #142b59;
+$primary-color: #4287f5;
+$white: #ffffff;
+$text-light: #555555;
+$black: #000000;
+$header-dashboard-1: #bfd4f4;
+$header-dashboard-2: #ccffcc;
+$header-dashboard-3: #f9dec9;
+$header-dashboard-4: #fdffcb;
+$header-dashboard-5: #f4bf08;
+$highlight-color-orange: #ed5c00;
+$header-filter: #3a7ab7;
+$header-filter-empty: #cacaca;
+$grid-button: #47b050;
+//width side bar
+$side-bar-width: 270px;
+$side-bar-collapsed-width: 80px;
+//font
+$font-size-small: 12px;
+$font-size-medium: 14px;
+$font-size-large: 16px;
+$font-size-larger: 18px;
+$font-dashboard-header: 32px;
+
+//responsive breakpoint
+$SM: 576px;
+$SMMin: 576px;
+$MD: 768px;
+$LG: 992px;
+$XL: 1200px;
+$XXL: 1400px;
+
+// media queries
+
+@mixin Responsive($canvas) {
+  @if $canvas == SM {
+    @media only screen and (min-width: $SM) {
+      @content;
+    }
+  } @else if $canvas == MD {
+    @media only screen and (min-width: $MD) {
+      @content;
+    }
+  } @else if $canvas == LG {
+    @media only screen and (min-width: $LG) {
+      @content;
+    }
+  } @else if $canvas == XL {
+    @media only screen and (min-width: $XL) {
+      @content;
+    }
+  } @else if $canvas == XXL {
+    @media only screen and (min-width: $XXL) {
+      @content;
+    }
+  } @else if $canvas == SMMin {
+    @media only screen and (max-width: $SMMin) {
+      @content;
+    }
+  }
+}

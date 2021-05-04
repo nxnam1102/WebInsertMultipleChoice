@@ -1,0 +1,113 @@
+@import "../../constants//variable.base.scss";
+
+.wrapper {
+  padding: 0px 15px;
+  .header {
+    margin-bottom: 20px;
+    .row_1 {
+      display: flex;
+      // height: 35px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin: 10px 0px 0px 0px;
+      .left {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        .select_skill {
+          margin-right: 10px;
+          @include Responsive(SM) {
+            margin: 5px 0px;
+            margin-right: 10px;
+          }
+        }
+        h3 {
+          margin: unset;
+          margin-right: 10px;
+          text-transform: uppercase;
+          font-weight: bold;
+          font-size: $font-size-larger;
+        }
+      }
+    }
+  }
+}
+.toolbar_btn {
+  border-radius: 20px;
+  background-color: $header-dashboard-5;
+  color: $main-dark;
+  .dx-icon {
+    color: $main-dark;
+  }
+}
+.toolbar_btn:hover {
+  opacity: 0.8;
+  background-color: $header-dashboard-5;
+}
+.toolbar_btn:focus {
+  background-color: $header-dashboard-5;
+}
+
+.upload_form {
+  .input_file {
+    .title {
+      margin-bottom: 10px;
+    }
+    .fileuploader_container {
+      border: 1px dashed #d3d3d3;
+      .container {
+        border: unset;
+        .dropzone {
+          padding: 30px 0px;
+          .upload_panel {
+            display: block;
+            text-align: center;
+            font-weight: 500;
+            margin: 0px;
+            margin-bottom: 5px;
+            // padding: 20px 0px;
+          }
+          em {
+            text-align: center;
+            width: 100%;
+            display: block;
+          }
+        }
+        .dropzone:focus {
+          outline: none;
+        }
+        .dropzone:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .upload_btn {
+    float: right;
+    font-weight: 600;
+    div {
+      span {
+        color: #fff !important;
+      }
+    }
+  }
+}
+
+.link_path {
+  color: #337ab7;
+  display: block;
+  width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link_path:hover {
+  cursor: pointer;
+}
+
+svg.bar_icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

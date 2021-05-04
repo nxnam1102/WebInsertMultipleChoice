@@ -1,0 +1,198 @@
+@import "../../constants//variable.base.scss";
+.main {
+  width: 100%;
+}
+#dashboard-card-1 {
+  background-color: $header-dashboard-1;
+}
+#dashboard-card-2 {
+  background-color: $header-dashboard-2;
+}
+#dashboard-card-3 {
+  background-color: $header-dashboard-3;
+}
+#dashboard-card-4 {
+  background-color: $header-dashboard-4;
+}
+#dashboard-card-5 {
+  background-color: $header-dashboard-5;
+}
+
+.header-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  @include Responsive(SMMin) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  @include Responsive(SM) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  @include Responsive(MD) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  @include Responsive(XL) {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+  .card-header {
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    width: 14%;
+    @include Responsive(SMMin) {
+      min-width: 100px;
+    }
+    @include Responsive(SM) {
+      min-width: 100px;
+    }
+    @include Responsive(MD) {
+      min-width: 100px;
+    }
+    @include Responsive(XL) {
+      min-width: 0px;
+    }
+    border-radius: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    .left-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: $font-size-larger;
+      font-weight: 700;
+      color: $main-dark;
+      word-wrap: break-word;
+      width: 40%;
+      text-align: center;
+      @include Responsive(SMMin) {
+        font-size: $font-size-medium;
+      }
+      @include Responsive(SM) {
+        font-size: $font-size-medium;
+      }
+      @include Responsive(MD) {
+        font-size: $font-size-large;
+      }
+      @include Responsive(XL) {
+        font-size: $font-size-larger;
+      }
+    }
+    .right-text {
+      justify-content: center;
+      align-items: center;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: $font-dashboard-header;
+      font-weight: bold;
+      color: $main-dark;
+      //width: 60%;
+      text-align: center;
+      @include Responsive(SMMin) {
+        font-size: $font-size-large;
+      }
+      @include Responsive(SM) {
+        font-size: $font-size-large;
+      }
+      @include Responsive(MD) {
+        font-size: $font-size-larger;
+      }
+      @include Responsive(XL) {
+        font-size: $font-dashboard-header;
+      }
+    }
+    .acronymt {
+      @include Responsive(SMMin) {
+        font-size: $font-size-small;
+      }
+      @include Responsive(SM) {
+        font-size: $font-size-small;
+      }
+      @include Responsive(MD) {
+        font-size: $font-size-medium;
+      }
+      @include Responsive(XL) {
+        font-size: $font-size-medium;
+      }
+    }
+  }
+}
+.header-row2 {
+  justify-content: space-between;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.date-time {
+  font-weight: bold;
+  font-size: $font-size-larger;
+  // color: $highlight-color-orange;
+}
+#userName {
+  font-weight: bold;
+  font-size: $font-size-larger;
+}
+#name {
+  font-size: $font-size-large;
+}
+.column {
+  margin-left: 50px;
+  .label {
+    color: $text-light;
+  }
+  .value {
+    font-size: $font-size-large;
+    margin-bottom: 10px;
+  }
+}
+.dx-toolbar-items-container {
+  margin-top: 20px !important;
+}
+.dx-datagrid-search-panel {
+  margin-left: 0px !important;
+}
+//popup style
+.dx-form-group-with-caption > .dx-form-group-content {
+  border-top: 0px !important;
+}
+.dx-form-group-caption {
+  //display: flex;
+  font-size: $font-size-large !important;
+  font-weight: bold;
+  //width: 100px;
+  border-bottom: 2px solid $highlight-color-orange;
+}
+#school-title {
+  font-weight: bold;
+  font-size: $font-size-larger;
+}
+.calendar-button {
+  border-radius: 20px !important;
+  background-color: $grid-button !important;
+  font-weight: bold !important;
+  .dx-button-text {
+    color: $white !important;
+  }
+}
+.detail_header {
+  margin-left: 50px;
+  .detail_code {
+    font-weight: bold;
+    font-size: $font-size-larger;
+  }
+  .detail_name {
+    font-size: $font-size-large;
+    margin-bottom: 20px;
+  }
+}

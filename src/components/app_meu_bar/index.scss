@@ -1,0 +1,82 @@
+@import "../../constants/variable.base.scss";
+$sidebar-bg-color: $main-color;
+$sidebar-color: $white !default;
+$sidebar-width: $side-bar-width !default;
+$sidebar-collapsed-width: $side-bar-collapsed-width !default;
+$highlight-color: $white !default;
+$submenu-bg-color: #2b2b2b !default;
+$submenu-bg-color-collapsed: #2b2b2b !default;
+$icon-bg-color: transparent !default;
+$icon-size: 35px !default;
+$breakpoint-xs: 480px !default;
+$breakpoint-sm: 576px !default;
+$breakpoint-md: 768px !default;
+$breakpoint-lg: 992px !default;
+$breakpoint-xl: 1200px !default;
+
+@import "~react-pro-sidebar/dist/scss/styles.scss";
+.pro-sidebar
+  .pro-menu
+  > ul
+  > .pro-menu-item.pro-sub-menu:hover
+  .pro-icon-wrapper
+  .pro-icon {
+  animation: none;
+}
+.pro-sidebar
+  .pro-menu
+  > ul
+  > .pro-menu-item.menu-item:hover
+  .pro-icon-wrapper
+  .pro-icon {
+  animation: infinite;
+}
+.pro-sidebar
+  .pro-menu
+  .pro-menu-item.pro-sub-menu
+  .pro-inner-list-item
+  .pro-inner-item
+  > .pro-icon-wrapper {
+  display: inline-block !important;
+}
+.pro-sidebar
+  .pro-menu
+  .pro-menu-item.pro-sub-menu
+  .pro-inner-list-item
+  .pro-inner-item
+  > .pro-icon-wrapper {
+  display: none;
+}
+.pro-sidebar
+  .pro-menu
+  .pro-menu-item.pro-sub-menu
+  .pro-inner-list-item
+  .pro-inner-item:before {
+  display: none;
+}
+.pro-sidebar .pro-menu .pro-menu-item.active {
+  border-left: solid 5px #cccccc;
+  background-color: #666666;
+  font-weight: 700;
+}
+.pro-sidebar {
+  height: 100%;
+  width: 270px;
+  min-width: 270px;
+  text-align: left;
+  transition: width, left, right, 0.3s;
+  position: relative;
+  z-index: 1009;
+}
+.menu {
+  .io5 {
+    font-size: 20px;
+    color: $white;
+  }
+  .menu-item:hover {
+    background-color: #666666;
+  }
+  .menu-item-collapse {
+    font-weight: bold;
+  }
+}
