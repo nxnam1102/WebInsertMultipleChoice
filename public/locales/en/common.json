@@ -1,0 +1,14 @@
+{
+  "language": "Language",
+  "vi": "Vietnamese",
+  "en": "English",
+  "theme": "Theme",
+  "field_required": "Field Required",
+  "mail_invalid": "Email is invalid",
+  "loading": "Loading...",
+  "dark_theme": "Dark mode",
+  "light_theme": "Light mode",
+  "thousand": "Thousand",
+  "million": "Million",
+  "billion": "Billion"
+}

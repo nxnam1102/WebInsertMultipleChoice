@@ -1,0 +1,14 @@
+{
+  "language": "Ngôn ngữ",
+  "vi": "Tiếng Việt",
+  "en": "Tiếng Anh",
+  "theme": "Giao diện",
+  "field_required": "Trường bắt buộc nhập",
+  "mail_invalid": "Email không hợp lệ",
+  "loading": "Đang tải...",
+  "dark_theme": "Nền tối",
+  "light_theme": "Nền sáng",
+  "thousand": "Nghìn",
+  "million": "Triệu",
+  "billion": "Tỷ"
+}

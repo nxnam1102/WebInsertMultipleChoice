@@ -1,0 +1,9 @@
+{
+  "login": "Đăng nhập",
+  "username": "Tên đăng nhập",
+  "password": "Mật khẩu",
+  "language": "Ngôn ngữ",
+  "login_btn": "Đăng nhập",
+  "login_succeed": "Đăng nhập thành công",
+  "login_fail": "Đăng nhập không thành công"
+}

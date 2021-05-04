@@ -1,0 +1,9 @@
+{
+  "login": "Log In",
+  "username": "Username",
+  "password": "Password",
+  "language": "Language",
+  "login_btn": "Log in",
+  "login_succeed": "Log in succeeded",
+  "login_fail": "Log in failed"
+}
