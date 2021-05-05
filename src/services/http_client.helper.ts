@@ -43,7 +43,7 @@ const instance = axios.create({
     "Content-Type": "application/json",
     Accept: "*/*",
     //"Accept-Encoding": "gzip, deflate",
-    "Access-Control-Allow-Origin": "*",
+    //"Access-Control-Allow-Origin": "*",
   },
 });
 export const Request = (controller: string) => {
@@ -111,10 +111,10 @@ export const Request = (controller: string) => {
         const jsha256 = CryptoJS.SHA256(stringSha256);
         const token = btoa(
           APP_CONSTANTS.KEYUPLOAD +
-          "." +
-          time +
-          "." +
-          jsha256.toString().toLowerCase()
+            "." +
+            time +
+            "." +
+            jsha256.toString().toLowerCase()
         );
         let response: any = await timeout(
           API_TIMEOUT,

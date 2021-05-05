@@ -7,6 +7,7 @@ import UserManagemnt from "./types/user_management";
 import Setting from "./types/setting";
 import Login from "./types/login";
 import CourseManagement from "./types/course_management";
+import User from "./types/user";
 
 const TypesDefault = ["FETCH", "SET_STATE"];
 const GetActionTypes = (ns: string, array: string[]) => {
@@ -30,6 +31,7 @@ const Index = {
   Login: () => GetActionTypes(NAMESPACE.LOGIN, Login),
   CourseManagement: () =>
     GetActionTypes(NAMESPACE.COURSE_MANAGEMENT, CourseManagement),
+  User: () => GetActionTypes(NAMESPACE.USER, User),
 };
 
 export default Index;

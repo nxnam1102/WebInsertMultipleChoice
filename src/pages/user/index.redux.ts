@@ -1,44 +1,37 @@
-import { all, call, delay, put, takeLatest } from "redux-saga/effects";
+import { all, call, put, takeLatest } from "redux-saga/effects";
 import { ActionsLoading } from "../../components/loading/loading.redux";
 import { AppLogging } from "../../helpers/utilities";
 import { ActionPayload, ReduxStateBase } from "../../interface/redux";
-import { UserManagementService } from "../../services/user_management";
+import { ResponseData } from "../../interface/service";
+import { UserService } from "../../services/user";
 import ActionTypes from "../../store/actions";
-import { AddNewDataParam } from "./index.interface";
 
 //#Redux Action ---------------------------------------------------------------------------
-const { FETCH, SET_STATE, ADD_NEW } = ActionTypes.UserManagement();
-export interface DashboardState extends ReduxStateBase {
+const { FETCH, SET_STATE } = ActionTypes.User();
+export interface UserState extends ReduxStateBase {
   isLoading?: boolean;
-  dataSchool?: any[];
-  dataUser?: any[];
+  data?: any[];
 }
 //#Redux Action Creators-------------------------------------------------------------------
 export const Actions = {
-  fetchData: (params: string | undefined): ActionPayload<string> => ({
+  fetchData: (): ActionPayload<any> => ({
     type: FETCH,
-    payload: params,
   }),
-  setState: (values: DashboardState): ActionPayload<DashboardState> => ({
+  setState: (values: UserState): ActionPayload<UserState> => ({
     type: SET_STATE,
     payload: values,
-  }),
-  addNew: (addNewData: AddNewDataParam): ActionPayload<AddNewDataParam> => ({
-    type: ADD_NEW,
-    payload: addNewData,
   }),
 };
 
 //#Redux Reducer --------------------------------------------------------------------------
 
-const INITIAL_STATE: DashboardState = {
-  dataSchool: [],
-  dataUser: [],
+const INITIAL_STATE: UserState = {
+  data: [],
 };
-export function userManagementReducer(
-  state: DashboardState = INITIAL_STATE,
-  action: ActionPayload<DashboardState>
-): DashboardState {
+export function userReducer(
+  state: UserState = INITIAL_STATE,
+  action: ActionPayload<UserState>
+): UserState {
   switch (action.type) {
     case FETCH:
       return { ...state };
@@ -60,40 +53,14 @@ function* fetchData(action: ActionPayload<ReduxStateBase>) {
         isLoading: true,
       })
     );
-    const dataSchool: any[] = yield call(UserManagementService.GetSchoolData);
-    const dataUser: any[] = yield call(
-      UserManagementService.GetUserData,
-      !action.payload && dataSchool.length > 0
-        ? dataSchool[0].id
-        : action.payload
-    );
-    yield put(Actions.setState({ dataSchool, dataUser }));
-  } catch (error) {
-    AppLogging.error(error);
-  } finally {
-    yield put(ActionsLoading.setState({ isLoading: false }));
-  }
-}
-//add new
-function* addNewDataSaga(action: ActionPayload<AddNewDataParam>) {
-  try {
-    yield put(
-      ActionsLoading.setState({
-        isLoading: true,
-      })
-    );
-    yield delay(300);
-    console.log(action.payload?.addNewData);
-    const dataUser: any[] = yield call(
-      UserManagementService.AddNewData,
-      action.payload?.addNewData,
-      action.payload?.currentSchoolId
-    );
-    let callback = action.payload?.callback;
-    if (callback && typeof callback == "function") {
-      callback();
+    var data: any[] = [];
+    const result: ResponseData<any> = yield call(UserService.GetData);
+    if (result && typeof result == "object" && "MessageCode" in result) {
+      data = result.Content;
+    } else {
+      AppLogging.error(result.Message);
     }
-    yield put(Actions.setState({ dataUser }));
+    yield put(Actions.setState({ data }));
   } catch (error) {
     AppLogging.error(error);
   } finally {
@@ -102,9 +69,6 @@ function* addNewDataSaga(action: ActionPayload<AddNewDataParam>) {
 }
 
 //#Redux Saga Watcher --------------------------------------------------------------------
-export function* userManagementWatcher() {
-  yield all([
-    takeLatest(FETCH, fetchData),
-    takeLatest(ADD_NEW, addNewDataSaga),
-  ]);
+export function* userWatcher() {
+  yield all([takeLatest(FETCH, fetchData)]);
 }

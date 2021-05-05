@@ -13,15 +13,10 @@ import NotFound from "./components/not_found";
 import { AppLogging } from "./helpers/utilities";
 import { Namespace } from "./constants/language";
 import AppStorage from "./local_storage";
-import CourseManagement from "./pages/course_management";
-import FileManagement from "./pages/file_management";
-import LessonManagement from "./pages/lesson_management";
 import Login from "./pages/login/index";
 import { Actions as LoginActions } from "./pages/login/index.redux";
-import SchedureFile from "./pages/schedure_file";
-import Setting from "./pages/setting";
-import UserManagement from "./pages/user_management";
 import { AppState } from "./store/root_reducer";
+import User from "./pages/user";
 
 function App() {
   //Use Effect
@@ -62,26 +57,20 @@ function App() {
     }, [updateStatus, t]);
     return (
       <Switch>
-        <Route path="/user_manage">
-          <UserManagement />
+        <Route path="/user">
+          <User />
         </Route>
-        <Route path="/course_manage">
-          <CourseManagement />
+        <Route path="/question">
+          <div />
         </Route>
-        <Route exact path="/file_manage">
-          <LessonManagement />
+        <Route exact path="/set">
+          <div />
         </Route>
-        <Route exact path="/file_manage/:id">
-          <FileManagement />
-        </Route>
-        <Route path="/setting">
-          <Setting />
-        </Route>
-        <Route path="/schedure_file">
-          <SchedureFile />
+        <Route exact path="/category">
+          <div />
         </Route>
         <Route exact path="/">
-          <Setting />
+          <div />
         </Route>
         <Route path="/">
           <NotFound />
