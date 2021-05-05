@@ -1,23 +1,22 @@
+import { Button } from "devextreme-react/button";
+import SelectBox from "devextreme-react/select-box";
 import React, { FC, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, withRouter } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { Namespace } from "../../constants/language";
-
-//Styles
-import styles from "./index.module.scss";
 import logoPanel from "../../assets/images/teachLogo.jpg";
-
-//Components
-import { Actions } from "./index.redux";
+import AppTextBox from "../../components/controls/text_box/index";
+import LoadingPanel from "../../components/loading/index";
+import { Namespace } from "../../constants/language";
+import AppStorage from "../../local_storage";
 import { AppState } from "../../store/root_reducer";
 import { Props } from "./index.interface";
-import LoadingPanel from "../../components/loading/index";
-import AppTextBox from "../../components/controls/text_box/index";
-import SelectBox from "devextreme-react/select-box";
-import { Button } from "devextreme-react/button";
-import AppStorage from "../../local_storage";
-import { AppLogging } from "../../helpers/utilities";
+//Styles
+import styles from "./index.module.scss";
+//Components
+import { Actions } from "./index.redux";
+
+
 
 //Pages
 const Index: FC<Props> = (props) => {

@@ -1,18 +1,15 @@
+import "devextreme/dist/css/dx.light.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import "./i18n";
 import { Provider } from "react-redux";
-import StoreProvider from "./store";
 import {
-  ToastProvider,
-  ToastProps,
-  DefaultToast,
+  DefaultToast, ToastProps, ToastProvider
 } from "react-toast-notifications";
-import themes from "devextreme/ui/themes";
-import { ThemeList } from "./constants/theme";
+import App from "./App";
+import "./i18n";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import StoreProvider from "./store";
 
 window.__react_toast_provider = React.createRef();
 StoreProvider.init();
@@ -43,26 +40,22 @@ const CustomToast: React.FC<ToastProps> = ({ children, ...props }) => {
     </div>
   );
 };
-let currentTheme = localStorage.getItem("dx-theme") || ThemeList.light;
-themes.ready(() => {
-  ReactDOM.render(
-    // <React.StrictMode>
-    <Provider store={reduxStore}>
-      <ToastProvider
-        components={{ Toast: CustomToast }}
-        autoDismiss
-        autoDismissTimeout={5000}
-        placement={"bottom-right"}
-        ref={window.__react_toast_provider}
-      >
-        <App />
-      </ToastProvider>
-    </Provider>,
-    // </React.StrictMode>,
-    document.getElementById("root")
-  );
-});
-themes.current(currentTheme);
+ReactDOM.render(
+  // <React.StrictMode>
+  <Provider store={reduxStore}>
+    <ToastProvider
+      components={{ Toast: CustomToast }}
+      autoDismiss
+      autoDismissTimeout={5000}
+      placement={"bottom-right"}
+      ref={window.__react_toast_provider}
+    >
+      <App />
+    </ToastProvider>
+  </Provider>,
+  // </React.StrictMode>,
+  document.getElementById("root")
+);
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

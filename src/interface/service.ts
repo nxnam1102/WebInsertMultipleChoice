@@ -1,5 +1,5 @@
 export interface ResponseData<T> {
-    msgCode: number;
-    message: string;
-    content: T;
+  MessageCode: number;
+  Message: string;
+  Content: T;
 }
