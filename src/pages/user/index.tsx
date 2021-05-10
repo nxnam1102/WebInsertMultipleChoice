@@ -21,6 +21,7 @@ const User = () => {
         showBorders={true}
         searchPanel={{ visible: true, highlightSearchText: true }}
         columnAutoWidth={true}
+        rowAlternationEnabled
       >
         <Paging defaultPageSize={10} />
         <Pager

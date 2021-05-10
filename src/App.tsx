@@ -19,6 +19,8 @@ import { AppState } from "./store/root_reducer";
 import User from "./pages/user";
 import Question from "./pages/question";
 import File from "./pages/file";
+import Category from "./pages/category";
+import Set from "./pages/set";
 
 function App() {
   //Use Effect
@@ -60,10 +62,10 @@ function App() {
     return (
       <Switch>
         <Route exact path="/category">
-          <div />
+          <Category />
         </Route>
         <Route exact path="/set">
-          <div />
+          <Set />
         </Route>
         <Route path="/question">
           <Question />
@@ -75,7 +77,7 @@ function App() {
           <User />
         </Route>
         <Route exact path="/">
-          <div />
+          <User />
         </Route>
         <Route path="/">
           <NotFound />
