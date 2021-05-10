@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { AiFillAppstore, AiFillQuestionCircle } from 'react-icons/ai';
-import {
-  IoMenu,
-  IoPerson
-} from "react-icons/io5";
-import { RiFileListFill } from 'react-icons/ri';
+import { AiFillAppstore, AiFillQuestionCircle } from "react-icons/ai";
+import { IoMenu, IoPerson } from "react-icons/io5";
+import { RiFileListFill, RiImage2Fill } from "react-icons/ri";
+import { FaFileImage } from "react-icons/fa";
 import { Menu, MenuItem, ProSidebar } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import { Link, useLocation } from "react-router-dom";
@@ -25,6 +23,7 @@ const MenuBar = () => {
     set: "/set",
     category: "/category",
     question: "/question",
+    file: "/file",
   };
   //#endregion
   //#region ------------function------------
@@ -47,28 +46,35 @@ const MenuBar = () => {
             active={pathname.includes(menuPath.category)}
             icon={<AiFillAppstore className={"io5"} />}
           >
-            <Link to={menuPath.category}>{'Danh nục'}</Link>
+            <Link to={menuPath.category}>{"Danh nục"}</Link>
           </MenuItem>
           <MenuItem
             className={"menu-item"}
             active={pathname.includes(menuPath.set)}
             icon={<RiFileListFill className={"io5"} />}
           >
-            <Link to={menuPath.set}>{'Bộ câu hỏi'}</Link>
+            <Link to={menuPath.set}>{"Bộ câu hỏi"}</Link>
           </MenuItem>
           <MenuItem
             className={"menu-item"}
             active={pathname.includes(menuPath.question)}
             icon={<AiFillQuestionCircle className={"io5"} />}
           >
-            <Link to={menuPath.question}>{'Câu hỏi'}</Link>
+            <Link to={menuPath.question}>{"Câu hỏi"}</Link>
+          </MenuItem>
+          <MenuItem
+            className={"menu-item"}
+            active={pathname.includes(menuPath.file)}
+            icon={<FaFileImage className={"io5"} />}
+          >
+            <Link to={menuPath.file}>{"Tệp đính kèm"}</Link>
           </MenuItem>
           <MenuItem
             className={"menu-item"}
             active={pathname.includes(menuPath.user)}
             icon={<IoPerson className={"io5"} />}
           >
-            <Link to={menuPath.user}>{'Người dùng'}</Link>
+            <Link to={menuPath.user}>{"Người dùng"}</Link>
           </MenuItem>
         </Menu>
       </ProSidebar>

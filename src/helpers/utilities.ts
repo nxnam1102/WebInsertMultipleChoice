@@ -42,7 +42,7 @@ export const AppLogging = {
             trace: trace.length > 0 ? trace : null,
             name: data && data.name ? data.name : "ERROR",
           };
-          CommonService.WriteLog(dataLogging);
+          //CommonService.WriteLog(dataLogging);
         });
       } else {
         let dataLogging: DataLogging = {
@@ -53,7 +53,7 @@ export const AppLogging = {
           trace: null,
           name: data && data.name ? data.name : "ERROR",
         };
-        CommonService.WriteLog(dataLogging);
+        //CommonService.WriteLog(dataLogging);
       }
     } catch (error) {
       console.log(error);
