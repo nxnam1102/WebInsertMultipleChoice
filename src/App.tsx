@@ -17,6 +17,8 @@ import Login from "./pages/login/index";
 import { Actions as LoginActions } from "./pages/login/index.redux";
 import { AppState } from "./store/root_reducer";
 import User from "./pages/user";
+import Question from "./pages/question";
+import File from "./pages/file";
 
 function App() {
   //Use Effect
@@ -57,17 +59,20 @@ function App() {
     }, [updateStatus, t]);
     return (
       <Switch>
-        <Route path="/user">
-          <User />
-        </Route>
-        <Route path="/question">
+        <Route exact path="/category">
           <div />
         </Route>
         <Route exact path="/set">
           <div />
         </Route>
-        <Route exact path="/category">
-          <div />
+        <Route path="/question">
+          <Question />
+        </Route>
+        <Route exact path="/file">
+          <File />
+        </Route>
+        <Route path="/user">
+          <User />
         </Route>
         <Route exact path="/">
           <div />
