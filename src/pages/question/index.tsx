@@ -112,7 +112,7 @@ const Question = () => {
   return (
     <div>
       <Form className={"header-form"}>
-        <Item itemType="group" colCount={2} colSpan={2}>
+        <Item itemType="group" colCount={4} colSpan={1}>
           <Item
             label={{ text: "Danh mục", showColon: false }}
             render={CategoryDropdown}
