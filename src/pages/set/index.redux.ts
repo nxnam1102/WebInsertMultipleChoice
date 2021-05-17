@@ -8,12 +8,8 @@ import ActionTypes from "../../store/actions";
 import { AppState } from "../../store/root_reducer";
 
 //#Redux Action ---------------------------------------------------------------------------
-const {
-  FETCH,
-  SET_STATE,
-  GET_DATA_BY_CATEGORY_ID,
-  FETCH_DONE,
-} = ActionTypes.Set();
+const { FETCH, SET_STATE, GET_DATA_BY_CATEGORY_ID, FETCH_DONE } =
+  ActionTypes.Set();
 export interface SetState extends ReduxStateBase {
   isLoading?: boolean;
   data?: any[];
@@ -24,9 +20,11 @@ export const Actions = {
   fetchData: (): ActionPayload<any> => ({
     type: FETCH,
   }),
-  fetchDone: (): ActionPayload<any> => ({
-    type: FETCH_DONE,
-  }),
+  fetchDone: (): ActionPayload<any> => {
+    return {
+      type: FETCH_DONE,
+    };
+  },
   getDataByCategoryId: (categoryId: any): ActionPayload<any> => ({
     type: GET_DATA_BY_CATEGORY_ID,
     payload: categoryId,
@@ -97,10 +95,11 @@ function* fetchData(action: ActionPayload<ReduxStateBase>) {
     AppLogging.error(error);
   } finally {
     yield put(ActionsLoading.setState({ isLoading: false }));
+    yield put(Actions.fetchDone());
   }
 }
 //get by categoryId
-function* getDataByCategoryIdSaga(action: ActionPayload<any>) {
+export function* getDataByCategoryIdSaga(action: ActionPayload<any>) {
   try {
     yield put(
       ActionsLoading.setState({

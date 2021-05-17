@@ -15,42 +15,58 @@ import {
   FilterRow,
   Lookup,
 } from "devextreme-react/data-grid";
-import { DropDownBox, Form } from "devextreme-react";
+import { Button, DropDownBox, Form } from "devextreme-react";
 import { Item } from "devextreme-react/form";
 
 //#endregion
 const Question = () => {
   const dispatch = useDispatch();
-  const data = useSelector((store: AppState) => store.userReducer.data);
+  const dataCategory = useSelector(
+    (store: AppState) => store.categoryReducer.data
+  );
+  const dataSet = useSelector((store: AppState) => store.setReducer.data);
+  const {
+    categorySelectedValue,
+    setSelectedValue,
+    allAnswer,
+    focusedRowIndex,
+    dataAnswer,
+    dataQuestion,
+    questionSelectedValue,
+  } = useSelector((store: AppState) => store.questionReducer);
   useEffect(() => {
     dispatch(Actions.fetchData());
   }, []);
-  const [categorySelectedValue, setCategorySelectedValue] = useState([]);
   const [categoryVisible, setCategoryVisible] = useState(false);
-  const [setSelectedValue, setSetSelectedValue] = useState([]);
+  const [a, setSetSelectedValue] = useState([]);
   const [setVisible, setSetVisible] = useState(false);
-  const dataGrid_Category_onSelectionChanged = (e: any) => {
-    setCategorySelectedValue(e.selectedRowKeys);
-    setCategoryVisible(false);
-  };
-  const dataGrid_Set_onSelectionChanged = (e: any) => {
-    setSetSelectedValue(e.selectedRowKeys);
-    setSetVisible(false);
-  };
+
   useEffect(() => {}, []);
+  //category
+  const dataGrid_Category_onSelectionChanged = (e: any) => {
+    //dispatch(Actions.setState({ categorySelectedValue: e.selectedRowKeys }));
+    setCategoryVisible(false);
+    let categoryId = Array.isArray(e) && e.length > 0 ? e[0].CategoryId : -1;
+    dispatch(
+      Actions.changeCategoryId({
+        categoryId,
+        categorySelectedValue: e,
+      })
+    );
+  };
   const dataGridCategoryRender = (e: any) => {
     return (
       <DataGrid
-        dataSource={[{ Id: 1, Name: "namnx" }]}
-        columns={["Id", "Name"]}
+        dataSource={dataCategory}
+        columns={["CategoryId", "CategoryName"]}
         hoverStateEnabled={true}
         selectedRowKeys={categorySelectedValue}
-        onSelectionChanged={dataGrid_Category_onSelectionChanged}
+        columnAutoWidth
+        onSelectedRowKeysChange={dataGrid_Category_onSelectionChanged}
         height={300}
       >
         <Selection mode="single" />
         <Scrolling mode="virtual" />
-        <Paging enabled={true} pageSize={10} />
         <FilterRow visible={true} />
       </DataGrid>
     );
@@ -58,13 +74,18 @@ const Question = () => {
   const CategoryDropdown = () => {
     return (
       <DropDownBox
-        value={1}
+        value={
+          Array.isArray(categorySelectedValue) &&
+          categorySelectedValue.length > 0
+            ? categorySelectedValue[0].CategoryId
+            : -1
+        }
         opened={categoryVisible}
-        valueExpr="Id"
-        displayExpr="Name"
+        valueExpr="CategoryId"
+        displayExpr="CategoryName"
         placeholder="Chọn danh mục"
         showClearButton={false}
-        dataSource={[{ Id: 1, Name: "namnx" }]}
+        dataSource={dataCategory}
         contentRender={dataGridCategoryRender}
         onOpenedChange={(e) => {
           setCategoryVisible(e);
@@ -74,19 +95,32 @@ const Question = () => {
   };
 
   //set drop down render
+  const dataGrid_Set_onSelectionChanged = (e: any) => {
+    dispatch(Actions.setState({ setSelectedValue: e.selectedRowKeys }));
+    setSetVisible(false);
+    let categoryId =
+      Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
+        ? e.selectedRowKeys[0].CategoryId
+        : -1;
+    let setId =
+      Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
+        ? e.selectedRowKeys[0].setId
+        : -1;
+    //dispatch(Actions.changeCategoryId({ categoryId, setId }));
+  };
   const dataGridSetRender = (e: any) => {
     return (
       <DataGrid
-        dataSource={[{ Id: 1, Name: "namnx" }]}
-        columns={["Id", "Name"]}
+        dataSource={dataSet}
+        columns={["SetId", "SetName"]}
         hoverStateEnabled={true}
+        columnAutoWidth
         selectedRowKeys={setSelectedValue}
         onSelectionChanged={dataGrid_Set_onSelectionChanged}
         height={300}
       >
         <Selection mode="single" />
         <Scrolling mode="virtual" />
-        <Paging enabled={true} pageSize={10} />
         <FilterRow visible={true} />
       </DataGrid>
     );
@@ -94,13 +128,17 @@ const Question = () => {
   const SetDropdown = () => {
     return (
       <DropDownBox
-        value={1}
+        value={
+          Array.isArray(setSelectedValue) && setSelectedValue.length > 0
+            ? setSelectedValue[0].SetId
+            : -1
+        }
         opened={setVisible}
-        valueExpr="Id"
-        displayExpr="Name"
-        placeholder="Chọn danh mục"
+        valueExpr="SetId"
+        displayExpr="SetName"
+        placeholder="Chọn bộ câu hỏi"
         showClearButton={false}
-        dataSource={[{ Id: 1, Name: "namnx" }]}
+        dataSource={dataSet}
         contentRender={dataGridSetRender}
         onOpenedChange={(e) => {
           setSetVisible(e);
@@ -111,8 +149,8 @@ const Question = () => {
 
   return (
     <div>
-      <Form className={"header-form"}>
-        <Item itemType="group" colCount={4} colSpan={1}>
+      <Form className={"header-form"} style={{ paddingBottom: 20 }}>
+        <Item itemType="group" colCount={2} colSpan={1}>
           <Item
             label={{ text: "Danh mục", showColon: false }}
             render={CategoryDropdown}
@@ -124,12 +162,76 @@ const Question = () => {
         </Item>
       </Form>
       <DataGrid
-        dataSource={Array.isArray(data) ? data : []}
+        dataSource={Array.isArray(dataQuestion) ? dataQuestion : []}
         showBorders={true}
         searchPanel={{ visible: true, highlightSearchText: true }}
         columnAutoWidth={true}
         rowAlternationEnabled={true}
+        selectedRowKeys={questionSelectedValue}
+        defaultSelectedRowKeys={
+          Array.isArray(dataQuestion) ? [dataQuestion[0]] : []
+        }
+        selection={{ mode: "single" }}
+        onSelectionChanged={(e) => {
+          let questionId =
+            Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
+              ? e.selectedRowKeys[0].QuestionId
+              : -1;
+          if (questionId === -1) {
+            dispatch(
+              Actions.setState({
+                questionSelectedValue: e.selectedRowKeys,
+              })
+            );
+          } else {
+            let newDataAnswer = allAnswer?.filter(
+              (x) => x.QuestionId === questionId
+            );
+            dispatch(
+              Actions.setState({
+                questionSelectedValue: e.selectedRowKeys,
+                dataAnswer: newDataAnswer,
+              })
+            );
+          }
+        }}
+        onToolbarPreparing={(e) => {
+          e.toolbarOptions?.items?.unshift({
+            location: "before",
+            widget: "dxButton",
+            options: {
+              elementAttr: {
+                class: "toolbar-btn-title",
+              },
+              type: "normal",
+              text: "Câu hỏi",
+              icon: "chevronnext",
+              stylingMode: "text",
+            },
+          });
+        }}
+        // onFocusedRowChanging={(e) => {
+        //   console.log(e);
+        //   let questionId =
+        //     Array.isArray(dataQuestion) && dataQuestion.length > 0
+        //       ? dataQuestion[
+        //           e.newRowIndex !== undefined && e.newRowIndex !== null
+        //             ? e.newRowIndex
+        //             : -1
+        //         ].QuestionId
+        //       : -1;
+        //   let newDataAnswer = allAnswer?.filter(
+        //     (x) => x.QuestionId === questionId
+        //   );
+        //   dispatch(
+        //     Actions.setState({
+        //       focusedRowIndex: e.newRowIndex,
+        //       dataAnswer: newDataAnswer,
+        //     })
+        //   );
+        // }}
       >
+        <Selection mode={"single"} selectAllMode={"allPages"} />
         <Paging defaultPageSize={20} />
         <Pager
           showPageSizeSelector={true}
@@ -166,11 +268,28 @@ const Question = () => {
       </DataGrid>
       <div style={{ height: 10 }} />
       <DataGrid
-        dataSource={Array.isArray(data) ? data : []}
+        dataSource={Array.isArray(dataAnswer) ? dataAnswer : []}
         showBorders={true}
         searchPanel={{ visible: true, highlightSearchText: true }}
         columnAutoWidth={true}
         rowAlternationEnabled={true}
+        // selectedRowKeys={questionSelectedValue}
+        // onSelectionChanged={dataGrid_Question_onSelectionChanged}
+        onToolbarPreparing={(e) => {
+          e.toolbarOptions?.items?.unshift({
+            location: "before",
+            widget: "dxButton",
+            options: {
+              elementAttr: {
+                class: "toolbar-btn-title",
+              },
+              type: "normal",
+              text: "Đáp án",
+              icon: "chevronnext",
+              stylingMode: "text",
+            },
+          });
+        }}
       >
         <Paging defaultPageSize={20} />
         <Pager

@@ -85,9 +85,8 @@ function* authCheck() {
       type: AUTH_ISLOADING,
       payload: true,
     });
-    // debugger
-    const auth =  AppStorage.get("auth");
-    if(auth === "true") {
+    const auth = AppStorage.get("auth");
+    if (auth === "true") {
       yield put({ type: AUTH_TOKEN_VALID });
     } else {
       yield put({ type: AUTH_SIGNOUT });
@@ -95,8 +94,8 @@ function* authCheck() {
     //get token
     // const token: string = yield AppStorage.get(APP_CONSTANTS.JWT);
     // if (token !== "") {
-      //check token valid
-      /*   const result = yield AccountService.CheckValidToken({ tokenId: token });
+    //check token valid
+    /*   const result = yield AccountService.CheckValidToken({ tokenId: token });
       if (result.MsgCode === 200) {
         if (result.Content.toString().toUpperCase() === "TRUE") {
           yield put({
