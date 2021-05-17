@@ -83,7 +83,6 @@ export const Request = (controller: string) => {
       try {
         let uri = getUri(controller, action, null);
         simpleUri = uri.split("?")[0];
-        // debugger
         let formData = new FormData();
         formData.append("file", params);
         let result = await instance.post(uri, formData, {

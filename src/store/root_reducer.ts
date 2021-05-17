@@ -5,6 +5,7 @@ import { logInReducer } from "../pages/login/index.redux";
 import { userReducer } from "../pages/user/index.redux";
 import { categoryReducer } from "../pages/category/index.redux";
 import { setReducer } from "../pages/set/index.redux";
+import { questionReducer } from "../pages/question/index.redux";
 
 const allReducer = combineReducers({
   authReducer,
@@ -13,6 +14,7 @@ const allReducer = combineReducers({
   userReducer,
   categoryReducer,
   setReducer,
+  questionReducer,
 });
 export type AppState = ReturnType<typeof allReducer>;
 export const rootReducer = (state: any, action: any) => {

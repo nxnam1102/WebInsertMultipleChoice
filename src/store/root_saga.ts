@@ -4,6 +4,7 @@ import { logInWatcher } from "../pages/login/index.redux";
 import { userWatcher } from "../pages/user/index.redux";
 import { categoryWatcher } from "../pages/category/index.redux";
 import { setWatcher } from "../pages/set/index.redux";
+import { questionWatcher } from "../pages/question/index.redux";
 
 export function* rootSaga() {
   yield all([
@@ -12,5 +13,6 @@ export function* rootSaga() {
     userWatcher(),
     categoryWatcher(),
     setWatcher(),
+    questionWatcher(),
   ]);
 }

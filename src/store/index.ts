@@ -11,7 +11,7 @@ const Store = {
     if (process.env.NODE_ENV !== "production") {
       store = createStore(
         rootReducer,
-        compose(applyMiddleware(sagaMiddleware, createLogger()))
+        compose(applyMiddleware(sagaMiddleware))
       );
     } else {
       store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
