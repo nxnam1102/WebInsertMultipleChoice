@@ -17,6 +17,8 @@ import {
 } from "devextreme-react/data-grid";
 import { Button, DropDownBox, Form } from "devextreme-react";
 import { Item } from "devextreme-react/form";
+import { Resizable } from "devextreme-react/resizable";
+import { useWindowDimensions } from "../../helpers/window-dimension";
 
 //#endregion
 const Question = () => {
@@ -29,10 +31,13 @@ const Question = () => {
     categorySelectedValue,
     setSelectedValue,
     allAnswer,
-    focusedRowIndex,
+    dataFile,
+    allFile,
     dataAnswer,
     dataQuestion,
     questionSelectedValue,
+    answerSelectedValue,
+    dataFileAnswer,
   } = useSelector((store: AppState) => store.questionReducer);
   useEffect(() => {
     dispatch(Actions.fetchData());
@@ -146,7 +151,8 @@ const Question = () => {
       />
     );
   };
-
+  const { height } = useWindowDimensions();
+  console.log(allFile);
   return (
     <div>
       <Form className={"header-form"} style={{ paddingBottom: 20 }}>
@@ -161,164 +167,270 @@ const Question = () => {
           ></Item>
         </Item>
       </Form>
-      <DataGrid
-        dataSource={Array.isArray(dataQuestion) ? dataQuestion : []}
-        showBorders={true}
-        searchPanel={{ visible: true, highlightSearchText: true }}
-        columnAutoWidth={true}
-        rowAlternationEnabled={true}
-        selectedRowKeys={questionSelectedValue}
-        defaultSelectedRowKeys={
-          Array.isArray(dataQuestion) ? [dataQuestion[0]] : []
-        }
-        selection={{ mode: "single" }}
-        onSelectionChanged={(e) => {
-          let questionId =
-            Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
-              ? e.selectedRowKeys[0].QuestionId
-              : -1;
-          if (questionId === -1) {
-            dispatch(
-              Actions.setState({
-                questionSelectedValue: e.selectedRowKeys,
-              })
-            );
-          } else {
-            let newDataAnswer = allAnswer?.filter(
-              (x) => x.QuestionId === questionId
-            );
-            dispatch(
-              Actions.setState({
-                questionSelectedValue: e.selectedRowKeys,
-                dataAnswer: newDataAnswer,
-              })
-            );
+      <div className={"row-question"}>
+        <DataGrid
+          className={"question-grid"}
+          dataSource={Array.isArray(dataQuestion) ? dataQuestion : []}
+          showBorders={true}
+          searchPanel={{ visible: true, highlightSearchText: true }}
+          columnAutoWidth={true}
+          //rowAlternationEnabled={true}
+          height={(height - 100) / 4}
+          selectedRowKeys={questionSelectedValue}
+          defaultSelectedRowKeys={
+            Array.isArray(dataQuestion) ? [dataQuestion[0]] : []
           }
-        }}
-        onToolbarPreparing={(e) => {
-          e.toolbarOptions?.items?.unshift({
-            location: "before",
-            widget: "dxButton",
-            options: {
-              elementAttr: {
-                class: "toolbar-btn-title",
+          selection={{ mode: "single" }}
+          onSelectionChanged={(e) => {
+            let questionId =
+              Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
+                ? e.selectedRowKeys[0].QuestionId
+                : -1;
+            if (questionId === -1) {
+              dispatch(
+                Actions.setState({
+                  questionSelectedValue: e.selectedRowKeys,
+                })
+              );
+            } else {
+              let newDataAnswer = allAnswer?.filter(
+                (x) => x.QuestionId === questionId
+              );
+              let newDataFile = allFile?.filter(
+                (x) => x.QuestionId === questionId && x.UseType === "Question"
+              );
+              dispatch(
+                Actions.setState({
+                  questionSelectedValue: e.selectedRowKeys,
+                  dataAnswer: newDataAnswer,
+                  dataFile: newDataFile,
+                  answerSelectedValue:
+                    Array.isArray(newDataAnswer) && newDataAnswer.length > 0
+                      ? [newDataAnswer[0]]
+                      : undefined,
+                })
+              );
+            }
+          }}
+          onToolbarPreparing={(e) => {
+            e.toolbarOptions?.items?.unshift({
+              location: "before",
+              widget: "dxButton",
+              options: {
+                elementAttr: {
+                  class: "toolbar-btn-title",
+                },
+                type: "normal",
+                text: "Câu hỏi",
+                icon: "chevronnext",
+                stylingMode: "text",
               },
-              type: "normal",
-              text: "Câu hỏi",
-              icon: "chevronnext",
-              stylingMode: "text",
-            },
-          });
-        }}
-        // onFocusedRowChanging={(e) => {
-        //   console.log(e);
-        //   let questionId =
-        //     Array.isArray(dataQuestion) && dataQuestion.length > 0
-        //       ? dataQuestion[
-        //           e.newRowIndex !== undefined && e.newRowIndex !== null
-        //             ? e.newRowIndex
-        //             : -1
-        //         ].QuestionId
-        //       : -1;
-        //   let newDataAnswer = allAnswer?.filter(
-        //     (x) => x.QuestionId === questionId
-        //   );
-        //   dispatch(
-        //     Actions.setState({
-        //       focusedRowIndex: e.newRowIndex,
-        //       dataAnswer: newDataAnswer,
-        //     })
-        //   );
-        // }}
-      >
-        <Selection mode={"single"} selectAllMode={"allPages"} />
-        <Paging defaultPageSize={20} />
-        <Pager
-          showPageSizeSelector={true}
-          allowedPageSizes={[10, 20, 30]}
-          showInfo={true}
-        />
+            });
+          }}
+        >
+          <Selection mode={"single"} selectAllMode={"allPages"} />
+          <Paging defaultPageSize={20} />
+          <Pager
+            showPageSizeSelector={true}
+            allowedPageSizes={[10, 20, 30]}
+            showInfo={true}
+          />
 
-        <Column dataField="CategoryId" visible={false} allowEditing={false} />
-        <Column dataField="SetId" visible={false} allowEditing={false} />
-        <Column
-          dataField="QuestionId"
-          caption={"Mã câu hỏi"}
-          alignment={"left"}
-          allowEditing={false}
-        />
-        <Column dataField="Question" caption={"Câu hỏi"} />
-        <Column dataField="QuestionType" caption={"Loại"}>
-          <Lookup
-            dataSource={[
-              { value: "one", name: "Một đáp án" },
-              { value: "multiple", name: "Nhiều đáp án" },
-              { value: null, name: "Một đáp án" },
-            ]}
-            valueExpr={"value"}
-            displayExpr={"name"}
+          <Column dataField="CategoryId" visible={false} allowEditing={false} />
+          <Column dataField="SetId" visible={false} allowEditing={false} />
+          <Column
+            dataField="QuestionId"
+            caption={"Mã câu hỏi"}
+            alignment={"left"}
+            allowEditing={false}
           />
-        </Column>
-        <Column
-          dataField="CreateDate"
-          caption={"Ngày tạo"}
-          allowEditing={false}
-        />
-        <Column dataField="Remarks" caption={"Gợi ý"} />
-      </DataGrid>
-      <div style={{ height: 10 }} />
-      <DataGrid
-        dataSource={Array.isArray(dataAnswer) ? dataAnswer : []}
-        showBorders={true}
-        searchPanel={{ visible: true, highlightSearchText: true }}
-        columnAutoWidth={true}
-        rowAlternationEnabled={true}
-        // selectedRowKeys={questionSelectedValue}
-        // onSelectionChanged={dataGrid_Question_onSelectionChanged}
-        onToolbarPreparing={(e) => {
-          e.toolbarOptions?.items?.unshift({
-            location: "before",
-            widget: "dxButton",
-            options: {
-              elementAttr: {
-                class: "toolbar-btn-title",
+          <Column dataField="Question" caption={"Câu hỏi"} />
+          <Column dataField="QuestionType" caption={"Loại"}>
+            <Lookup
+              dataSource={[
+                { value: "one", name: "Một đáp án" },
+                { value: "multiple", name: "Nhiều đáp án" },
+                { value: null, name: "Một đáp án" },
+              ]}
+              valueExpr={"value"}
+              displayExpr={"name"}
+            />
+          </Column>
+          <Column
+            dataField="CreateDate"
+            caption={"Ngày tạo"}
+            allowEditing={false}
+          />
+          <Column dataField="Remarks" caption={"Gợi ý"} />
+        </DataGrid>
+        <div style={{ paddingTop: 10 }} />
+        <DataGrid
+          className={"question-file-grid"}
+          dataSource={Array.isArray(dataFile) ? dataFile : []}
+          showBorders={true}
+          height={(height - 100) / 4}
+          searchPanel={{ visible: true, highlightSearchText: true }}
+          columnAutoWidth={true}
+          //rowAlternationEnabled={true}
+          onToolbarPreparing={(e) => {
+            e.toolbarOptions?.items?.unshift({
+              location: "before",
+              widget: "dxButton",
+              options: {
+                elementAttr: {
+                  class: "toolbar-btn-title",
+                },
+                type: "normal",
+                text: "Tệp câu hỏi",
+                icon: "chevronnext",
+                stylingMode: "text",
               },
-              type: "normal",
-              text: "Đáp án",
-              icon: "chevronnext",
-              stylingMode: "text",
-            },
-          });
-        }}
-      >
-        <Paging defaultPageSize={20} />
-        <Pager
-          showPageSizeSelector={true}
-          allowedPageSizes={[10, 20, 30]}
-          showInfo={true}
-        />
-        <Column dataField="CategoryId" visible={false} allowEditing={false} />
-        <Column dataField="SetId" visible={false} allowEditing={false} />
-        <Column dataField="QuestionId" visible={false} allowEditing={false} />
-        <Column
-          dataField="AnswerId"
-          caption={"Mã đáp án"}
-          allowEditing={false}
-        />
-        <Column dataField="Answer" caption={"Đáp án"} />
-        <Column dataField="Remark" caption={"Ghi chú"} />
-        <Column dataField="IsTrueAnswer" caption={"Là đáp án đúng"}>
-          <Lookup
-            dataSource={[
-              { value: "Y", name: "Đúng" },
-              { value: "N", name: "Sai" },
-              { value: null, name: "Sai" },
-            ]}
-            valueExpr={"value"}
-            displayExpr={"name"}
+            });
+          }}
+        >
+          <Column dataField="FileId" caption={"Mã tệp"} allowEditing={false} />
+          <Column dataField="FileName" caption={"Tên tệp"} />
+          <Column dataField="Type" caption={"Loại tệp"} />
+          <Column dataField="Remark" caption={"Ghi chú"} allowEditing={false} />
+          <Column
+            dataField="CreateDate"
+            caption={"Ngày tạo"}
+            allowEditing={false}
+            type={"date"}
+            format={"DD-MM-YYYY"}
           />
-        </Column>
-      </DataGrid>
+          <Column dataField="Path" caption={"Đường dẫn"} width={300} />
+          <Column dataField="UseType" caption={"Sử dụng cho"} />
+        </DataGrid>
+        <div style={{ paddingTop: 10 }} />
+        <DataGrid
+          dataSource={Array.isArray(dataAnswer) ? dataAnswer : []}
+          showBorders={true}
+          searchPanel={{ visible: true, highlightSearchText: true }}
+          columnAutoWidth={true}
+          //rowAlternationEnabled={true}
+          height={(height - 100) / 4}
+          selectedRowKeys={answerSelectedValue}
+          defaultSelectedRowKeys={
+            Array.isArray(dataAnswer) && dataAnswer.length > 0
+              ? [dataAnswer[0]]
+              : []
+          }
+          selection={{ mode: "single" }}
+          onSelectionChanged={(e) => {
+            let answerId =
+              Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
+                ? e.selectedRowKeys[0].AnswerId
+                : -1;
+            let questionId =
+              Array.isArray(e.selectedRowKeys) && e.selectedRowKeys.length > 0
+                ? e.selectedRowKeys[0].QuestionId
+                : -1;
+            if (answerId === -1) {
+              dispatch(
+                Actions.setState({
+                  answerSelectedValue: e.selectedRowKeys,
+                })
+              );
+            } else {
+              let newDataFile = allFile?.filter(
+                (x) =>
+                  x.QuestionId === questionId &&
+                  x.UseType === "Answer" &&
+                  x.AnswerId === answerId
+              );
+              dispatch(
+                Actions.setState({
+                  answerSelectedValue: e.selectedRowKeys,
+                  dataFileAnswer: newDataFile,
+                })
+              );
+            }
+          }}
+          onToolbarPreparing={(e) => {
+            e.toolbarOptions?.items?.unshift({
+              location: "before",
+              widget: "dxButton",
+              options: {
+                elementAttr: {
+                  class: "toolbar-btn-title",
+                },
+                type: "normal",
+                text: "Đáp án",
+                icon: "chevronnext",
+                stylingMode: "text",
+              },
+            });
+          }}
+        >
+          <Paging defaultPageSize={20} />
+          <Pager
+            showPageSizeSelector={true}
+            allowedPageSizes={[10, 20, 30]}
+            showInfo={true}
+          />
+          <Column dataField="CategoryId" visible={false} allowEditing={false} />
+          <Column dataField="SetId" visible={false} allowEditing={false} />
+          <Column dataField="QuestionId" visible={false} allowEditing={false} />
+          <Column
+            dataField="AnswerId"
+            caption={"Mã đáp án"}
+            allowEditing={false}
+          />
+          <Column dataField="Answer" caption={"Đáp án"} />
+          <Column dataField="Remark" caption={"Ghi chú"} />
+          <Column dataField="IsTrueAnswer" caption={"Là đáp án đúng"}>
+            <Lookup
+              dataSource={[
+                { value: "Y", name: "Đúng" },
+                { value: "N", name: "Sai" },
+                { value: null, name: "Sai" },
+              ]}
+              valueExpr={"value"}
+              displayExpr={"name"}
+            />
+          </Column>
+        </DataGrid>
+        <div style={{ paddingTop: 10 }} />
+        <DataGrid
+          className={"answer-file-grid"}
+          dataSource={Array.isArray(dataFileAnswer) ? dataFileAnswer : []}
+          showBorders={true}
+          height={(height - 100) / 4}
+          searchPanel={{ visible: true, highlightSearchText: true }}
+          columnAutoWidth={true}
+          //rowAlternationEnabled={true}
+          onToolbarPreparing={(e) => {
+            e.toolbarOptions?.items?.unshift({
+              location: "before",
+              widget: "dxButton",
+              options: {
+                elementAttr: {
+                  class: "toolbar-btn-title",
+                },
+                type: "normal",
+                text: "Tệp đáp án",
+                icon: "chevronnext",
+                stylingMode: "text",
+              },
+            });
+          }}
+        >
+          <Column dataField="FileId" caption={"Mã tệp"} allowEditing={false} />
+          <Column dataField="FileName" caption={"Tên tệp"} />
+          <Column dataField="Type" caption={"Loại tệp"} />
+          <Column dataField="Remark" caption={"Ghi chú"} allowEditing={false} />
+          <Column
+            dataField="CreateDate"
+            caption={"Ngày tạo"}
+            allowEditing={false}
+            type={"date"}
+            format={"DD-MM-YYYY"}
+          />
+          <Column dataField="Path" caption={"Đường dẫn"} width={300} />
+          <Column dataField="UseType" caption={"Sử dụng cho"} />
+        </DataGrid>
+      </div>
     </div>
   );
 };
