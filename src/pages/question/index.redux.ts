@@ -18,7 +18,10 @@ export interface QuestionState extends ReduxStateBase {
   categorySelectedValue?: any[];
   setSelectedValue?: any[];
   questionSelectedValue?: any[];
-  focusedRowIndex?: number;
+  allFile?: any[];
+  dataFile?: any;
+  dataFileAnswer?: any;
+  answerSelectedValue?: any[];
 }
 interface LoadDataByIdParams {
   categoryId?: number;
@@ -56,7 +59,6 @@ export const Actions = {
 const INITIAL_STATE: QuestionState = {
   dataQuestion: [],
   dataAnswer: [],
-  focusedRowIndex: 0,
 };
 export function questionReducer(
   state: QuestionState = INITIAL_STATE,
@@ -123,6 +125,31 @@ function* fetchData(action: ActionPayload<ReduxStateBase>) {
           (x: any) => x.QuestionId === questionId
         );
       }
+      let dataFile = [];
+      if (
+        Array.isArray(result.Content.allFile) &&
+        result.Content.allFile.length > 0
+      ) {
+        dataFile = result.Content.allFile.filter(
+          (x: any) => x.QuestionId === questionId && x.UseType === "Question"
+        );
+      }
+      let answerId =
+        Array.isArray(dataAnswer) && dataAnswer.length > 0
+          ? dataAnswer[0].AnswerId
+          : -1;
+      let dataFileAnswer = [];
+      if (
+        Array.isArray(result.Content.allFile) &&
+        result.Content.allFile.length > 0
+      ) {
+        dataFileAnswer = result.Content.allFile.filter(
+          (x: any) =>
+            x.QuestionId === questionId &&
+            x.UseType === "Answer" &&
+            x.AnswerId === answerId
+        );
+      }
       let categorySelectedValue =
         categoryData.length > 0 ? [categoryData[0]] : [];
       let setSelectedValue = setData.length > 0 ? [setData[0]] : [];
@@ -130,14 +157,22 @@ function* fetchData(action: ActionPayload<ReduxStateBase>) {
         result.Content.allQuestion.length > 0
           ? [result.Content.allQuestion[0]]
           : [];
+      let answerSelectedValue =
+        Array.isArray(dataAnswer) && dataAnswer.length > 0
+          ? [dataAnswer[0]]
+          : [];
       yield put(
         Actions.setState({
-          dataAnswer: dataAnswer,
           dataQuestion: result.Content.allQuestion,
+          dataAnswer: dataAnswer,
           allAnswer: result.Content.allAnswer,
+          dataFile: dataFile,
+          allFile: result.Content.allFile,
           categorySelectedValue,
           setSelectedValue,
           questionSelectedValue,
+          answerSelectedValue,
+          dataFileAnswer: dataFileAnswer,
         })
       );
     } else {
@@ -202,6 +237,31 @@ function* changeCategoryIdSaga(action: ActionPayload<LoadDataByIdParams>) {
           (x: any) => x.QuestionId === questionId
         );
       }
+      let dataFile = [];
+      if (
+        Array.isArray(result.Content.allFile) &&
+        result.Content.allFile.length > 0
+      ) {
+        dataFile = result.Content.allFile.filter(
+          (x: any) => x.QuestionId === questionId && x.UseType === "Question"
+        );
+      }
+      let answerId =
+        Array.isArray(dataAnswer) && dataAnswer.length > 0
+          ? dataAnswer[0].AnswerId
+          : -1;
+      let dataFileAnswer = [];
+      if (
+        Array.isArray(result.Content.allFile) &&
+        result.Content.allFile.length > 0
+      ) {
+        dataFileAnswer = result.Content.allFile.filter(
+          (x: any) =>
+            x.QuestionId === questionId &&
+            x.UseType === "Answer" &&
+            x.AnswerId === answerId
+        );
+      }
       const categoryData: any[] = yield select(
         (state: AppState) => state.categoryReducer.data
       );
@@ -219,14 +279,22 @@ function* changeCategoryIdSaga(action: ActionPayload<LoadDataByIdParams>) {
         result.Content.allQuestion.length > 0
           ? [result.Content.allQuestion[0]]
           : [];
+      let answerSelectedValue =
+        Array.isArray(dataAnswer) && dataAnswer.length > 0
+          ? [dataAnswer[0]]
+          : [];
       yield put(
         Actions.setState({
-          dataAnswer: dataAnswer,
           dataQuestion: result.Content.allQuestion,
+          dataAnswer: dataAnswer,
           allAnswer: result.Content.allAnswer,
+          dataFile: dataFile,
+          allFile: result.Content.allFile,
           categorySelectedValue,
           setSelectedValue,
           questionSelectedValue,
+          answerSelectedValue,
+          dataFileAnswer: dataFileAnswer,
         })
       );
     } else {
