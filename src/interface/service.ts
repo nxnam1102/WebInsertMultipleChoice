@@ -3,3 +3,7 @@ export interface ResponseData<T> {
   Message: string;
   Content: T;
 }
+export interface AppConfigData {
+  ALERT_TIME: number;
+  API_URL: string;
+}

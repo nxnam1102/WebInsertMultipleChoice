@@ -1,3 +1,9 @@
+import { cloneDeep } from "lodash";
+import {
+  AppLogging,
+  get_url_extension,
+  isNotEmpty,
+} from "../helpers/utilities";
 import { Request } from "./http_client.helper";
 
 const instance = Request("GetData");
@@ -8,7 +14,7 @@ export const GetDataService = {
       let result = await instance.getAsync("GetListCategory");
       return result;
     } catch (error) {
-      console.log(error);
+      AppLogging.error(error);
     }
   },
   GetDataSet: async (categoryId: any): Promise<any> => {
@@ -16,7 +22,7 @@ export const GetDataService = {
       let result = await instance.getAsync("GetListSet", { categoryId });
       return result;
     } catch (error) {
-      console.log(error);
+      AppLogging.error(error);
     }
   },
   GetDataQuestion: async (categoryId: any, setId: any): Promise<any> => {
@@ -27,7 +33,87 @@ export const GetDataService = {
       });
       return result;
     } catch (error) {
-      console.log(error);
+      AppLogging.error(error);
+    }
+  },
+  //save question
+  SaveQuestion: async (data: any): Promise<any> => {
+    try {
+      let result = await Request("Question").postAsync("SaveQuestion", [data]);
+      return result;
+    } catch (error) {
+      AppLogging.error(error);
+    }
+  },
+  //save answer
+  SaveAnswer: async (data: any): Promise<any> => {
+    try {
+      let result = await Request("Question").postAsync("SaveAnswer", [data]);
+      return result;
+    } catch (error) {
+      AppLogging.error(error);
+    }
+  },
+  SaveFile: async (data: any): Promise<any> => {
+    try {
+      let result = {
+        Message: "Notfound error",
+        MessageCode: 401,
+        Content: null,
+      };
+      let dataSave = cloneDeep(data?.data);
+      let dataFile = cloneDeep(data?.file);
+      if (dataSave?.Type === "server") {
+        let resultUpload = await Request("File").postFileAsync(
+          "UploadFile",
+          Array.isArray(dataFile) && dataFile.length > 0
+            ? dataFile[0]
+            : dataFile
+        );
+        if (
+          resultUpload &&
+          typeof resultUpload === "object" &&
+          "Message" in resultUpload
+        ) {
+          if (isNotEmpty(resultUpload.Message)) {
+            return resultUpload;
+          } else {
+            dataSave.Type = resultUpload.Content?.Type;
+            dataSave.Path = resultUpload.Content?.Path;
+            result = await Request("Question").postAsync("SaveFile", [
+              dataSave,
+            ]);
+          }
+        } else {
+          return result;
+        }
+      } else if (dataSave?.Type === "url") {
+        debugger;
+        let ext = get_url_extension(dataSave?.Path);
+        if (
+          ext === "jpg" ||
+          ext === "jpeg" ||
+          ext === "png" ||
+          ext === "gif" ||
+          ext === "webp" ||
+          ext === "svg"
+        ) {
+          dataSave.Type = "image/url";
+        } else if (
+          ext === "3gp" ||
+          ext === "mp3" ||
+          ext === "mp4" ||
+          ext === "au"
+        ) {
+          dataSave.Type = "audio/url";
+        }
+        result = await Request("Question").postAsync("SaveFile", [dataSave]);
+      } else {
+        result = await Request("Question").postAsync("SaveFile", [dataSave]);
+      }
+      return result;
+    } catch (error) {
+      AppLogging.error(error);
     }
   },
 };

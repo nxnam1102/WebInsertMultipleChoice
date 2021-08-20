@@ -1,9 +1,11 @@
 import axios from "axios";
 import APP_CONSTANTS from "../constants/app";
 import { AppLogging } from "../helpers/utilities";
+import { AppConfigData } from "../interface/service";
 
 const API_TIMEOUT = 60000;
-const ApiAddress = "http://192.168.0.69:6868/api/";
+const CONFIG = (window as any).__CONFIG__ as AppConfigData;
+export const ApiAddress = CONFIG.API_URL;
 export const timeout = (
   ms: number,
   promise: any,
