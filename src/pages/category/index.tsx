@@ -16,6 +16,7 @@ import { Editing } from "devextreme-react/data-grid";
 import { Popup } from "devextreme-react/data-grid";
 import { Item } from "devextreme-react/form";
 import moment from "moment";
+import { cloneDeep } from "lodash";
 
 //#endregion
 const Category = () => {
@@ -24,6 +25,12 @@ const Category = () => {
   useEffect(() => {
     dispatch(Actions.fetchData());
   }, []);
+  let defaultData = {
+    CategoryId: -1,
+    CategoryName: null,
+    ImageSrc: null,
+    Remarks: null,
+  };
   return (
     <div>
       <DataGrid
@@ -32,6 +39,30 @@ const Category = () => {
         searchPanel={{ visible: true, highlightSearchText: true }}
         columnAutoWidth={true}
         rowAlternationEnabled={true}
+        onRowRemoved={(e) => {
+          let saveData = {
+            ...cloneDeep(defaultData),
+            ...e.data,
+            ActionType: "D",
+          };
+          dispatch(Actions.SaveData(saveData));
+        }}
+        onRowInserted={(e) => {
+          let saveData = {
+            ...cloneDeep(defaultData),
+            ...e.data,
+            ActionType: "A",
+          };
+          dispatch(Actions.SaveData(saveData));
+        }}
+        onRowUpdated={(e) => {
+          let saveData = {
+            ...cloneDeep(defaultData),
+            ...e.data,
+            ActionType: "U",
+          };
+          dispatch(Actions.SaveData(saveData));
+        }}
       >
         <Paging defaultPageSize={10} />
         <Pager
@@ -39,7 +70,7 @@ const Category = () => {
           allowedPageSizes={[5, 10, 20]}
           showInfo={true}
         />
-        <Editing allowAdding allowDeleting allowUpdating mode="popup">
+        <Editing allowAdding allowDeleting allowUpdating mode="popup" useIcons>
           <Popup title="Danh mục" showTitle={true} width={700} height={525} />
           <Form>
             <Item itemType="group" colCount={2} colSpan={2}>
