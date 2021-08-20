@@ -20,6 +20,7 @@ import { Popup } from "devextreme-react/data-grid";
 import moment from "moment";
 import { DropDownBox } from "devextreme-react/drop-down-box";
 import { Form, Item } from "devextreme-react/form";
+import { cloneDeep } from "lodash";
 
 //#endregion
 const Set = () => {
@@ -74,6 +75,7 @@ const Set = () => {
     );
   };
   const categoryChanged = (value: any) => {};
+  console.log(categorySelectedValue);
   const CategoryDropdown = () => {
     return (
       <DropDownBox
@@ -91,6 +93,12 @@ const Set = () => {
       />
     );
   };
+  let defaultData = {
+    CategoryId: -1,
+    SetId: -1,
+    SetName: null,
+    Remarks: null,
+  };
   return (
     <div>
       <Form className={"header-form"}>
@@ -107,6 +115,34 @@ const Set = () => {
         searchPanel={{ visible: true, highlightSearchText: true }}
         columnAutoWidth={true}
         rowAlternationEnabled={true}
+        onRowRemoved={(e) => {
+          let saveData = {
+            ...cloneDeep(defaultData),
+            ...e.data,
+            CategoryId: categorySelectedValue,
+            ActionType: "D",
+          };
+          dispatch(Actions.SaveData(saveData));
+        }}
+        onRowInserted={(e) => {
+          console.log(e);
+          let saveData = {
+            ...cloneDeep(defaultData),
+            ...e.data,
+            CategoryId: categorySelectedValue,
+            ActionType: "A",
+          };
+          dispatch(Actions.SaveData(saveData));
+        }}
+        onRowUpdated={(e) => {
+          let saveData = {
+            ...cloneDeep(defaultData),
+            ...e.data,
+            CategoryId: categorySelectedValue,
+            ActionType: "U",
+          };
+          dispatch(Actions.SaveData(saveData));
+        }}
       >
         <Paging defaultPageSize={10} />
         <Pager
@@ -114,12 +150,12 @@ const Set = () => {
           allowedPageSizes={[5, 10, 20]}
           showInfo={true}
         />
-        <Editing allowAdding allowDeleting allowUpdating mode="popup">
+        <Editing allowAdding allowDeleting allowUpdating mode="popup" useIcons>
           <Popup title="Danh mục" showTitle={true} width={700} height={525} />
           <FormGrid>
             <Item itemType="group" colCount={2} colSpan={2}>
-              <Item dataField="CategoryName" />
-              <Item dataField="ImageSrc" />
+              <Item dataField="SetName" />
+              <Item dataField="Type" />
               <Item dataField="Remarks" colCount={2} colSpan={2} />
             </Item>
           </FormGrid>
@@ -133,7 +169,6 @@ const Set = () => {
         />
         <Column dataField="SetName" caption={"Tên bộ câu hỏi"} />
         <Column dataField="Remarks" caption={"Ghi chú"} />
-        <Column dataField="QuestionQuantity" caption={"Số lượng câu hỏi"} />
         <Column dataField="Type" caption={"Loại"} />
         <Column
           dataField="CreateDate"

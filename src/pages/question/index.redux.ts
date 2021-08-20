@@ -402,6 +402,7 @@ function* saveSaga(action: ActionPayload<SaveDataParams>) {
                 yield put(
                   Actions.setState({
                     dataFileAnswer: cloneDeep(dataFile),
+                    allFile: cloneDeep(resultReload.Content.allFile),
                   })
                 );
               } else {
@@ -413,6 +414,7 @@ function* saveSaga(action: ActionPayload<SaveDataParams>) {
                 yield put(
                   Actions.setState({
                     dataFile: cloneDeep(dataFile),
+                    allFile: cloneDeep(resultReload.Content.allFile),
                   })
                 );
               }

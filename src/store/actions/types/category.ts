@@ -1,2 +1,2 @@
-const Types: string[] = [];
+const Types: string[] = ["SAVE_DATA"];
 export default Types;

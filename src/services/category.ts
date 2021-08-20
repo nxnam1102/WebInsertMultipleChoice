@@ -88,29 +88,52 @@ export const GetDataService = {
           return result;
         }
       } else if (dataSave?.Type === "url") {
-        debugger;
         let ext = get_url_extension(dataSave?.Path);
-        if (
-          ext === "jpg" ||
-          ext === "jpeg" ||
-          ext === "png" ||
-          ext === "gif" ||
-          ext === "webp" ||
-          ext === "svg"
-        ) {
+        if (dataSave.SelectionType === "image") {
           dataSave.Type = "image/url";
-        } else if (
-          ext === "3gp" ||
-          ext === "mp3" ||
-          ext === "mp4" ||
-          ext === "au"
-        ) {
+        } else if (dataSave.SelectionType === "audio") {
           dataSave.Type = "audio/url";
+        } else {
+          if (
+            ext === "jpg" ||
+            ext === "jpeg" ||
+            ext === "png" ||
+            ext === "gif" ||
+            ext === "webp" ||
+            ext === "svg"
+          ) {
+            dataSave.Type = "image/url";
+          } else if (
+            ext === "3gp" ||
+            ext === "mp3" ||
+            ext === "mp4" ||
+            ext === "au"
+          ) {
+            dataSave.Type = "audio/url";
+          } else {
+            dataSave.Type = "image/url";
+          }
         }
         result = await Request("Question").postAsync("SaveFile", [dataSave]);
       } else {
         result = await Request("Question").postAsync("SaveFile", [dataSave]);
       }
+      return result;
+    } catch (error) {
+      AppLogging.error(error);
+    }
+  },
+  SaveCategory: async (data: any): Promise<any> => {
+    try {
+      let result = await Request("Question").postAsync("SaveCategory", [data]);
+      return result;
+    } catch (error) {
+      AppLogging.error(error);
+    }
+  },
+  SaveSet: async (data: any): Promise<any> => {
+    try {
+      let result = await Request("Question").postAsync("SaveSet", [data]);
       return result;
     } catch (error) {
       AppLogging.error(error);

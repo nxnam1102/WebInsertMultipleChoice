@@ -17,7 +17,13 @@ export const FormUpdateFile = (props: any) => {
     { code: "url", name: "From url" },
     { code: "server", name: "Upload to server" },
   ];
+  let dataSourceSelectType = [
+    { code: "default", name: "Mặc định" },
+    { code: "audio", name: "Âm thanh" },
+    { code: "image", name: "Hình ảnh" },
+  ];
   const [type, setType] = useState("url");
+  const [selectType, setSelectType] = useState("default");
   const formDataRef = useRef<any>(null);
   const [fileUpload, setFileUpload] = useState<any>();
   return (
@@ -55,6 +61,21 @@ export const FormUpdateFile = (props: any) => {
                 },
               }}
             />
+            {type === "url" && (
+              <Item
+                dataField="SelectType"
+                editorType="dxSelectBox"
+                editorOptions={{
+                  dataSource: dataSourceSelectType,
+                  displayExpr: "name",
+                  valueExpr: "code",
+                  value: selectType ? selectType : "default",
+                  onValueChanged: (e: any) => {
+                    setSelectType(e.value);
+                  },
+                }}
+              />
+            )}
             <Item dataField="Remarks" colSpan={2} />
 
             {type !== "url" ? (

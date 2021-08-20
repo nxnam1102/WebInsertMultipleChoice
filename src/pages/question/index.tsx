@@ -459,6 +459,7 @@ const Question = () => {
                     Type: "url",
                     Remarks: "",
                     ActionType: "A",
+                    SelectType: "default",
                   };
                   setDataFormFile(defaultData);
                   formEditFileRef?.current?.instance?.show();
@@ -661,6 +662,16 @@ const Question = () => {
         />
         <Column dataField="Answer" caption={"Đáp án"} width={400} />
         <Column dataField="Remark" caption={"Ghi chú"} />
+        <Column dataField="Type" caption={"Loại"}>
+          <Lookup
+            dataSource={[
+              { value: "html", name: "Html" },
+              { value: "text", name: "Text" },
+            ]}
+            valueExpr={"value"}
+            displayExpr={"name"}
+          />
+        </Column>
         <Column dataField="IsTrueAnswer" caption={"Là đáp án đúng"}>
           <Lookup
             dataSource={[
@@ -692,7 +703,10 @@ const Question = () => {
                   stylingMode={"text"}
                   icon={"edit"}
                   type={"default"}
-                  onClick={() => {}}
+                  onClick={() => {
+                    setValueDetail(e.data?.Answer);
+                    formDetailRef?.current?.instance?.show();
+                  }}
                 >
                   <IoEye size={20} />
                 </Button>
@@ -810,7 +824,7 @@ const Question = () => {
                     AnswerId:
                       Array.isArray(answerSelectedValue) &&
                       answerSelectedValue.length > 0
-                        ? answerSelectedValue[0].QuestionId
+                        ? answerSelectedValue[0].AnswerId
                         : -1,
                     Path: "",
                     FileId: -1,
@@ -818,6 +832,8 @@ const Question = () => {
                     UseType: "Answer",
                     Type: "url",
                     Remarks: "",
+                    SelectType: "default",
+                    ActionType: "A",
                   };
                   setDataFormFile(defaultData);
                   formEditFileRef?.current?.instance?.show();
