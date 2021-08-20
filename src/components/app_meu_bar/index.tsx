@@ -23,7 +23,6 @@ const MenuBar = () => {
     set: "/set",
     category: "/category",
     question: "/question",
-    file: "/file",
   };
   //#endregion
   //#region ------------function------------
@@ -61,13 +60,6 @@ const MenuBar = () => {
             icon={<AiFillQuestionCircle className={"io5"} />}
           >
             <Link to={menuPath.question}>{"Câu hỏi"}</Link>
-          </MenuItem>
-          <MenuItem
-            className={"menu-item"}
-            active={pathname.includes(menuPath.file)}
-            icon={<FaFileImage className={"io5"} />}
-          >
-            <Link to={menuPath.file}>{"Tệp đính kèm"}</Link>
           </MenuItem>
           <MenuItem
             className={"menu-item"}

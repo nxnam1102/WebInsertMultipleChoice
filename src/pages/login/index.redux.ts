@@ -88,7 +88,6 @@ function* login(action: any) {
       action.payload.username === "admin" &&
       action.payload.password === "1"
     ) {
-      console.log(1);
       yield delay(1000);
       yield put({
         type: ActionTypes.Auth().SET_STATE,
@@ -99,7 +98,6 @@ function* login(action: any) {
       // localStorage.setItem("SecretApiUpload", process.env.SecretApiUpload!);
       yield put({ type: ActionTypes.Auth().AUTH_SIGNIN });
     } else {
-      console.log(2);
       yield delay(1000);
       yield put({
         type: ActionTypes.Auth().SET_STATE,

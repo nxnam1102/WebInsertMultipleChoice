@@ -42,7 +42,7 @@ export const AppLogging = {
             trace: trace.length > 0 ? trace : null,
             name: data && data.name ? data.name : "ERROR",
           };
-          //CommonService.WriteLog(dataLogging);
+          CommonService.WriteLog(dataLogging);
         });
       } else {
         let dataLogging: DataLogging = {
@@ -53,7 +53,7 @@ export const AppLogging = {
           trace: null,
           name: data && data.name ? data.name : "ERROR",
         };
-        //CommonService.WriteLog(dataLogging);
+        CommonService.WriteLog(dataLogging);
       }
     } catch (error) {
       console.log(error);
@@ -89,6 +89,9 @@ const getDateNow = () => {
     date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
   );
 };
+export function get_url_extension(url: any) {
+  return url.split(/[#?]/)[0].split(".").pop().trim();
+}
 const getTimeNow = () => {
   const date = new Date();
   let time = "",
@@ -291,6 +294,14 @@ function acronymtNumber(labelValue: string | number) {
       }
     : { value: Math.abs(Number(labelValue)), acronymt: "" };
 }
+export const isNotEmpty = (value: any) => {
+  try {
+    if (value !== undefined && value !== null && value !== "") {
+      return true;
+    }
+  } catch (error) {}
+  return false;
+};
 export function addToast(...args: any[]) {
   const add = lodash.get(window, "__react_toast_provider.current.add");
   const test = lodash.get(window, "__react_toast_provider.current");

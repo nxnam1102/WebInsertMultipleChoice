@@ -61,7 +61,13 @@ const Category = () => {
           caption={"Ảnh"}
           dataField="ImageSrc"
           cellRender={(arg) => {
-            return <img className={"image-category"} src={arg.value} />;
+            return (
+              <img
+                className={"image-category"}
+                src={arg.value}
+                alt={"category"}
+              />
+            );
           }}
         />
         <Column

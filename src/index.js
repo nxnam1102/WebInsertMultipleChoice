@@ -3,7 +3,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import {
-  DefaultToast, ToastProps, ToastProvider
+  DefaultToast,
+  DefaultToastContainer,
+  ToastProps,
+  ToastProvider,
 } from "react-toast-notifications";
 import App from "./App";
 import "./i18n";
@@ -27,6 +30,9 @@ function copyToClipboard(text) {
   document.body.removeChild(dummy);
 }
 // ===== or when using modules =====
+const ToastContainer = (props) => (
+  <DefaultToastContainer style={{ zIndex: 10000000 }} {...props} />
+);
 const CustomToast: React.FC<ToastProps> = ({ children, ...props }) => {
   return (
     <div
@@ -44,7 +50,7 @@ ReactDOM.render(
   // <React.StrictMode>
   <Provider store={reduxStore}>
     <ToastProvider
-      components={{ Toast: CustomToast }}
+      components={{ Toast: CustomToast, ToastContainer: ToastContainer }}
       autoDismiss
       autoDismissTimeout={5000}
       placement={"bottom-right"}

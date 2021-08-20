@@ -1,6 +1,7 @@
+import { cloneDeep } from "lodash";
 import { all, call, put, select, take, takeLatest } from "redux-saga/effects";
 import { ActionsLoading } from "../../components/loading/loading.redux";
-import { AppLogging } from "../../helpers/utilities";
+import { AppLogging, isNotEmpty } from "../../helpers/utilities";
 import { ActionPayload, ReduxStateBase } from "../../interface/redux";
 import { ResponseData } from "../../interface/service";
 import { GetDataService } from "../../services/category";
@@ -8,8 +9,14 @@ import ActionTypes from "../../store/actions";
 import { AppState } from "../../store/root_reducer";
 
 //#Redux Action ---------------------------------------------------------------------------
-const { FETCH, SET_STATE, FETCH_DONE, CHANGE_CATEGORY_ID, CHANGE_SET_ID } =
-  ActionTypes.Question();
+const {
+  FETCH,
+  SET_STATE,
+  FETCH_DONE,
+  CHANGE_CATEGORY_ID,
+  CHANGE_SET_ID,
+  SAVE_DATA,
+} = ActionTypes.Question();
 export interface QuestionState extends ReduxStateBase {
   isLoading?: boolean;
   dataQuestion?: any[];
@@ -27,6 +34,12 @@ interface LoadDataByIdParams {
   categoryId?: number;
   setId?: number;
   categorySelectedValue?: any;
+  setSelectedValue?: any;
+}
+interface SaveDataParams {
+  type: "question" | "answer" | "file";
+  callback?: Function;
+  data?: any;
 }
 //#Redux Action Creators-------------------------------------------------------------------
 export const Actions = {
@@ -51,6 +64,10 @@ export const Actions = {
   ): ActionPayload<LoadDataByIdParams> => ({
     type: CHANGE_SET_ID,
     payload: param,
+  }),
+  save: (params: SaveDataParams): ActionPayload<SaveDataParams> => ({
+    type: SAVE_DATA,
+    payload: params,
   }),
 };
 
@@ -195,8 +212,6 @@ function* changeCategoryIdSaga(action: ActionPayload<LoadDataByIdParams>) {
         isLoading: true,
       })
     );
-    var data: any[] = [];
-
     yield put({
       type: ActionTypes.Set().GET_DATA_BY_CATEGORY_ID,
       payload: action.payload?.categoryId,
@@ -205,12 +220,21 @@ function* changeCategoryIdSaga(action: ActionPayload<LoadDataByIdParams>) {
     const setData: any[] = yield select(
       (state: AppState) => state.setReducer.data
     );
-    yield put(
-      Actions.setState({
-        categorySelectedValue: action.payload?.categorySelectedValue,
-      })
-    );
-    console.log(setData);
+    // if (action.payload?.categorySelectedValue) {
+    //   yield put(
+    //     Actions.setState({
+    //       categorySelectedValue: action.payload?.categorySelectedValue,
+    //     })
+    //   );
+    // }
+    // if (action.payload?.setSelectedValue) {
+    //   yield put(
+    //     Actions.setState({
+    //       setSelectedValue: action.payload?.setSelectedValue,
+    //     })
+    //   );
+    // }
+    //console.log(setData);
     let setId =
       action.payload?.setId !== undefined
         ? action.payload?.setId
@@ -285,13 +309,13 @@ function* changeCategoryIdSaga(action: ActionPayload<LoadDataByIdParams>) {
           : [];
       yield put(
         Actions.setState({
+          categorySelectedValue,
+          setSelectedValue,
           dataQuestion: result.Content.allQuestion,
           dataAnswer: dataAnswer,
           allAnswer: result.Content.allAnswer,
           dataFile: dataFile,
           allFile: result.Content.allFile,
-          categorySelectedValue,
-          setSelectedValue,
           questionSelectedValue,
           answerSelectedValue,
           dataFileAnswer: dataFileAnswer,
@@ -308,11 +332,116 @@ function* changeCategoryIdSaga(action: ActionPayload<LoadDataByIdParams>) {
     yield put(Actions.fetchDone());
   }
 }
+function* saveSaga(action: ActionPayload<SaveDataParams>) {
+  try {
+    yield put(
+      ActionsLoading.setState({
+        isLoading: true,
+      })
+    );
+    let type = action.payload?.type;
+    let result: ResponseData<any> = {
+      Message: "Notfound error",
+      MessageCode: 401,
+      Content: null,
+    };
+    let saveData = cloneDeep(action.payload?.data);
+    if (type === "question") {
+      result = yield call(GetDataService.SaveQuestion, saveData);
+    } else if (type === "answer") {
+      result = yield call(GetDataService.SaveAnswer, saveData);
+    } else if (type === "file") {
+      result = yield call(GetDataService.SaveFile, saveData);
+    }
+    if (result && typeof result === "object" && "Message" in result) {
+      if (isNotEmpty(result.Message) === false) {
+        AppLogging.success("Thành công");
+        if (typeof action.payload?.callback === "function") {
+          action.payload.callback();
+        }
+        //================reload data==============
+        let resultReload: ResponseData<any> = {
+          Message: "Notfound error",
+          MessageCode: 401,
+          Content: [],
+        };
+        resultReload = yield call(
+          GetDataService.GetDataQuestion,
+          type === "file" ? saveData.data.CategoryId : saveData.CategoryId,
+          type === "file" ? saveData.data.SetId : saveData.SetId
+        );
+        if (
+          resultReload &&
+          typeof resultReload === "object" &&
+          "Message" in resultReload
+        ) {
+          if (isNotEmpty(resultReload.Message) === false) {
+            if (type === "question") {
+              yield put(
+                Actions.setState({
+                  dataQuestion: cloneDeep(resultReload.Content.allQuestion),
+                })
+              );
+            } else if (type === "answer") {
+              let dataAnswer = resultReload.Content.allAnswer.filter(
+                (x: any) => x.QuestionId === saveData.QuestionId
+              );
+              yield put(
+                Actions.setState({
+                  dataAnswer: cloneDeep(dataAnswer),
+                })
+              );
+            } else if (type === "file") {
+              if (saveData.data.UseType === "Answer") {
+                let dataFile = resultReload.Content.allFile.filter(
+                  (x: any) =>
+                    x.QuestionId === saveData.data.QuestionId &&
+                    x.UseType === "Answer" &&
+                    x.AnswerId === saveData.data.AnswerId
+                );
+                yield put(
+                  Actions.setState({
+                    dataFileAnswer: cloneDeep(dataFile),
+                  })
+                );
+              } else {
+                let dataFile = resultReload.Content.allFile.filter(
+                  (x: any) =>
+                    x.QuestionId === saveData.data.QuestionId &&
+                    x.UseType === "Question"
+                );
+                yield put(
+                  Actions.setState({
+                    dataFile: cloneDeep(dataFile),
+                  })
+                );
+              }
+            }
+          } else {
+            AppLogging.error(result.Message);
+          }
+        } else {
+          AppLogging.error("Notfound error reload");
+        }
+      } else {
+        AppLogging.error(result.Message);
+      }
+    } else {
+      AppLogging.error("Notfound error");
+    }
 
+    //yield put(Actions.setState({ data }));
+  } catch (error) {
+    AppLogging.error(error);
+  } finally {
+    yield put(ActionsLoading.setState({ isLoading: false }));
+  }
+}
 //#Redux Saga Watcher --------------------------------------------------------------------
 export function* questionWatcher() {
   yield all([
     takeLatest(FETCH, fetchData),
     takeLatest(CHANGE_CATEGORY_ID, changeCategoryIdSaga),
+    takeLatest(SAVE_DATA, saveSaga),
   ]);
 }

@@ -70,9 +70,6 @@ function App() {
         <Route path="/question">
           <Question />
         </Route>
-        <Route exact path="/file">
-          <File />
-        </Route>
         <Route path="/user">
           <User />
         </Route>
