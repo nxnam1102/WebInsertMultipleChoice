@@ -876,6 +876,17 @@ const Question = () => {
                 >
                   <Button
                     stylingMode={"text"}
+                    icon={"edit"}
+                    type={"default"}
+                    onClick={async () => {
+                      await setDataPreviewFile(e.data);
+                      formPreviewFileRef?.current?.instance?.show();
+                    }}
+                  >
+                    <IoEye size={20} />
+                  </Button>
+                  <Button
+                    stylingMode={"text"}
                     icon={"trash"}
                     type={"danger"}
                     onClick={async () => {
@@ -958,6 +969,7 @@ const Question = () => {
                   type: "answer",
                   callback: () => {
                     formEditAnswerRef?.current?.instance?.hide();
+                    setDataFormAnswer(undefined);
                   },
                 })
               );

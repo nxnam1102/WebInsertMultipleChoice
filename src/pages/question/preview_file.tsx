@@ -8,7 +8,6 @@ export const PreviewFile = (props: any) => {
   let formRef = props.formRef;
   let data = props.data;
   let type = data?.Type;
-  console.log(data?.Path);
   const audioRef = useRef<any>(null);
   return (
     <div>
