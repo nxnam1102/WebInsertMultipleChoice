@@ -8,7 +8,7 @@ import { FormAnswerList } from "./form_answer_list";
 export const FormUpdateAnswer = (props: any) => {
   let dataDefault = cloneDeep(props.data);
   let formRef = props.formRef;
-  const [data, setData] = useState([{ ...dataDefault }]);
+  const [data, setData] = useState<any[]>([cloneDeep(props.data)]);
   useEffect(() => {
     if (props.isHaveData === true) {
       setData(cloneDeep([props.data]));
@@ -20,6 +20,8 @@ export const FormUpdateAnswer = (props: any) => {
         initData.push(newData);
       }
       setData(initData);
+    } else {
+      setData([props.data]);
     }
   }, [props.data, props.isHaveData]);
   return (
