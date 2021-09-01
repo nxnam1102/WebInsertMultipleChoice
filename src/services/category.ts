@@ -48,7 +48,7 @@ export const GetDataService = {
   //save answer
   SaveAnswer: async (data: any): Promise<any> => {
     try {
-      let result = await Request("Question").postAsync("SaveAnswer", [data]);
+      let result = await Request("Question").postAsync("SaveAnswer", data);
       return result;
     } catch (error) {
       AppLogging.error(error);

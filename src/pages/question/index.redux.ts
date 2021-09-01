@@ -367,8 +367,16 @@ function* saveSaga(action: ActionPayload<SaveDataParams>) {
         };
         resultReload = yield call(
           GetDataService.GetDataQuestion,
-          type === "file" ? saveData.data.CategoryId : saveData.CategoryId,
-          type === "file" ? saveData.data.SetId : saveData.SetId
+          type === "file"
+            ? saveData.data.CategoryId
+            : type === "answer"
+            ? saveData[0]?.CategoryId
+            : saveData.CategoryId,
+          type === "file"
+            ? saveData.data.SetId
+            : type === "answer"
+            ? saveData[0]?.SetId
+            : saveData.SetId
         );
         if (
           resultReload &&
@@ -384,10 +392,11 @@ function* saveSaga(action: ActionPayload<SaveDataParams>) {
               );
             } else if (type === "answer") {
               let dataAnswer = resultReload.Content.allAnswer.filter(
-                (x: any) => x.QuestionId === saveData.QuestionId
+                (x: any) => x.QuestionId === saveData[0]?.QuestionId
               );
               yield put(
                 Actions.setState({
+                  allAnswer: resultReload.Content.allAnswer,
                   dataAnswer: cloneDeep(dataAnswer),
                 })
               );
