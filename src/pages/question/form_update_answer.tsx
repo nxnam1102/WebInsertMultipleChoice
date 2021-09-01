@@ -1,180 +1,114 @@
 import { Button } from "devextreme-react/button";
-import { Form, Item } from "devextreme-react/form";
-import { HtmlEditor } from "devextreme-react/html-editor";
-import React, { useRef, useState } from "react";
+import { cloneDeep } from "lodash";
+import React, { useEffect, useState } from "react";
+import { v4 } from "uuid";
 import AppPopup from "../../components/controls/popup";
+import { FormAnswerList } from "./form_answer_list";
 
 export const FormUpdateAnswer = (props: any) => {
-  let data = props.data;
+  let dataDefault = cloneDeep(props.data);
   let formRef = props.formRef;
-  let dataSourceAnswerType = [
-    { code: "Y", name: "Đáp án đúng" },
-    { code: "N", name: "Đáp án sai" },
-  ];
-  let dataSourceType = [
-    { code: "html", name: "HTML Copy" },
-    { code: "html_code", name: "HTML Code" },
-    { code: "normal", name: "Bình thường" },
-  ];
-  const [type, setType] = useState("normal");
-  const [resultFromCode, setResultFromCode] = useState("");
-  const formDataRef = useRef<any>(null);
-  const resultPopupRef = useRef<any>(null);
+  const [data, setData] = useState([{ ...dataDefault }]);
+  useEffect(() => {
+    if (props.isHaveData === true) {
+      setData(cloneDeep([props.data]));
+    } else if (props.data) {
+      let initData = [];
+      for (let i = 0; i < 4; i++) {
+        let newData = cloneDeep(props.data);
+        newData.Id = v4();
+        initData.push(newData);
+      }
+      setData(initData);
+    }
+  }, [props.data, props.isHaveData]);
   return (
     <div>
-      <AppPopup height={700} popupRef={formRef}>
-        <Form formData={data} ref={formDataRef}>
-          <Item itemType="group" colCount={2} colSpan={2}>
-            <Item
-              dataField="AnswerId"
-              editorOptions={{
-                readOnly: true,
+      <AppPopup
+        height={700}
+        popupRef={formRef}
+        titleRender={() => {
+          return (
+            <div
+              style={{
+                marginTop: 20,
+                justifyContent: "space-between",
+                display: "flex",
+                flexDirection: "row",
               }}
-            />
-            <Item
-              dataField="IsTrueAnswer"
-              editorType="dxSelectBox"
-              editorOptions={{
-                dataSource: dataSourceAnswerType,
-                displayExpr: "name",
-                valueExpr: "code",
-              }}
-            />
-            <Item dataField="Remarks" />
-            <Item
-              dataField="Type"
-              editorType="dxSelectBox"
-              editorOptions={{
-                dataSource: dataSourceType,
-                displayExpr: "name",
-                valueExpr: "code",
-                value: type ? type : "normal",
-                onValueChanged: (e: any) => {
-                  setType(e.value);
-                },
-              }}
-            />
-            {type === "normal" ? (
-              <Item
-                dataField="Answer"
-                editorType="dxTextArea"
-                colSpan={2}
-                editorOptions={{ height: 450 }}
-              />
-            ) : type === "html_code" ? (
-              <Item
-                dataField="Answer"
-                editorType="dxTextArea"
-                colSpan={2}
-                editorOptions={{ height: 450 }}
-              />
-            ) : (
-              <Item
-                dataField="Answer"
-                editorType="dxHtmlEditor"
-                colSpan={2}
-                editorOptions={{
-                  height: 450,
-                  toolbar: {
-                    items: [
-                      "font",
-                      "color",
-                      "bold",
-                      "italic",
-                      "underline",
-                      "alignCenter",
-                      "alignJustify",
-                      "alignLeft",
-                      "alignRight",
-                      "background",
-                      "blockquote",
-                      "bulletList",
-                      "clear",
-                      "codeBlock",
-                      "decreaseIndent",
-                      "deleteColumn",
-                      "deleteRow",
-                      "deleteTable",
-                      "header",
-                      "image",
-                      "increaseIndent",
-                      "insertColumnLeft",
-                      "insertColumnRight",
-                      "insertRowAbove",
-                      "insertRowBelow",
-                      "insertTable",
-                      "link",
-                      "orderedList",
-                      "separator",
-                      "size",
-                      "subscript",
-                      "superscript",
-                      "variable",
-                      "strike",
-                      "undo",
-                      "redo",
-                    ],
-                  },
+            >
+              <div
+                style={{
+                  borderWidth: 1,
+                  borderColor: "red",
+                  display: "flex",
+                  //justifyContent: "flex-end",
+                  flexDirection: "row",
+                  width: "50%",
                 }}
-              />
-            )}
-          </Item>
-          <Item></Item>
-        </Form>
-        <div
-          style={{
-            justifyContent: "flex-end",
-            display: "flex",
-          }}
-        >
-          <div
-            style={{
-              borderWidth: 1,
-              borderColor: "red",
-              display: "flex",
-              justifyContent: "flex-end",
-              flexDirection: "row",
-              width: "50%",
-            }}
-          >
-            {type === "html_code" && (
-              <Button
-                style={{ marginRight: 10 }}
-                text={"Kết quả"}
-                type={"default"}
-                onClick={() => {
-                  let formData =
-                    formDataRef.current?.instance?.option("formData");
-                  let answer = formData?.Answer;
-                  setResultFromCode(answer);
-                  resultPopupRef?.current?.instance?.show();
-                }}
-              />
-            )}
+              >
+                {dataDefault?.ActionType === "A" && (
+                  <Button
+                    style={{ marginRight: 10 }}
+                    stylingMode={"text"}
+                    type={"success"}
+                    icon={"add"}
+                    onClick={() => {
+                      let newData = cloneDeep(data);
+                      dataDefault.Id = v4();
+                      newData.push(dataDefault);
+                      setData(newData);
+                    }}
+                  />
+                )}
 
-            <Button
-              style={{ marginRight: 10 }}
-              text={"Lưu"}
-              type={"success"}
-              onClick={() => {
-                let data = formDataRef.current?.instance?.option("formData");
-                if (typeof props.saveFunction === "function") {
-                  props.saveFunction(data);
-                }
-              }}
-            />
-            <Button
-              text={"Hủy"}
-              type={"danger"}
-              onClick={() => {
-                formRef?.current?.instance?.hide();
-              }}
-            />
-          </div>
-        </div>
-      </AppPopup>
-      <AppPopup popupRef={resultPopupRef} height={500}>
-        <HtmlEditor value={resultFromCode} readOnly={true} height={400} />
+                <Button
+                  style={{ marginRight: 10 }}
+                  icon={"save"}
+                  type={"default"}
+                  stylingMode={"text"}
+                  onClick={() => {
+                    let newData = cloneDeep(data);
+                    if (typeof props.saveFunction === "function") {
+                      props.saveFunction(newData);
+                    }
+                  }}
+                />
+              </div>
+              <Button
+                icon={"close"}
+                type={"danger"}
+                stylingMode={"text"}
+                onClick={() => {
+                  formRef?.current?.instance?.hide();
+                }}
+              />
+            </div>
+          );
+        }}
+      >
+        <FormAnswerList
+          actionType={dataDefault?.ActionType}
+          data={data}
+          updateData={(object: any) => {
+            let id = object.Id;
+            let newData = cloneDeep(data);
+            let index = newData.findIndex((x) => x.Id === id);
+            if (index >= 0) {
+              newData[index] = cloneDeep(object);
+              setData(newData);
+            }
+          }}
+          deleteData={(object: any) => {
+            let id = object.Id;
+            let newData = cloneDeep(data);
+            let index = newData.findIndex((x) => x.Id === id);
+            if (index >= 0) {
+              newData.splice(index, 1);
+              setData(newData);
+            }
+          }}
+        />
       </AppPopup>
     </div>
   );

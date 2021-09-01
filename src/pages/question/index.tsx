@@ -28,6 +28,8 @@ import { IoEye } from "react-icons/io5";
 import { FormDetail } from "./view_detail";
 import { confirm } from "devextreme/ui/dialog";
 import { PreviewFile } from "./preview_file";
+import { v4 } from "uuid";
+import { isNotEmpty } from "../../helpers/utilities";
 
 //#endregion
 const Question = () => {
@@ -638,6 +640,7 @@ const Question = () => {
                   Remarks: "",
                   Type: "normal",
                   ActionType: "A",
+                  Id: v4(),
                 };
                 setDataFormAnswer(defaultData);
                 formEditAnswerRef?.current?.instance?.show();
@@ -747,7 +750,7 @@ const Question = () => {
                     data.ActionType = "D";
                     dispatch(
                       Actions.save({
-                        data: data,
+                        data: [data],
                         type: "answer",
                       })
                     );
@@ -934,20 +937,31 @@ const Question = () => {
         <FormUpdateAnswer
           formRef={formEditAnswerRef}
           data={dataFormAnswer}
+          isHaveData={
+            Array.isArray(dataAnswer) && dataAnswer.length > 0 ? true : false
+          }
           saveFunction={(data: any) => {
             let saveData = cloneDeep(data);
-            if (`${saveData?.Type}`.includes("html")) {
-              saveData.Type = "html";
+            if (Array.isArray(saveData) && saveData.length > 0) {
+              saveData.forEach(function (v) {
+                delete v.Open;
+                if (`${v?.Type}`.includes("html")) {
+                  v.Type = "html";
+                }
+              });
+              saveData = saveData.filter((x) => {
+                return isNotEmpty(x.Answer);
+              });
+              dispatch(
+                Actions.save({
+                  data: saveData,
+                  type: "answer",
+                  callback: () => {
+                    formEditAnswerRef?.current?.instance?.hide();
+                  },
+                })
+              );
             }
-            dispatch(
-              Actions.save({
-                data: saveData,
-                type: "answer",
-                callback: () => {
-                  formEditAnswerRef?.current?.instance?.hide();
-                },
-              })
-            );
           }}
         />
         <FormUpdateFile
@@ -969,6 +983,7 @@ const Question = () => {
       </div>
     );
   }, [
+    dataAnswer,
     dataFormAnswer,
     dataFormFile,
     dataFormQuestion,
