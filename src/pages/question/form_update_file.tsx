@@ -1,3 +1,4 @@
+import { HtmlEditor } from "devextreme-react";
 import { Button } from "devextreme-react/button";
 import { FileUploader } from "devextreme-react/file-uploader";
 import { Form, Item } from "devextreme-react/form";
@@ -16,19 +17,26 @@ export const FormUpdateFile = (props: any) => {
   let dataSourceType = [
     { code: "url", name: "From url" },
     { code: "server", name: "Upload to server" },
+    { code: "html", name: "Html" },
   ];
   let dataSourceSelectType = [
     { code: "default", name: "Mặc định" },
     { code: "audio", name: "Âm thanh" },
     { code: "image", name: "Hình ảnh" },
   ];
+  let dataSourceSelectTypeHtml = [
+    { code: "html", name: "HTML Copy" },
+    { code: "html_code", name: "HTML Code" },
+  ];
   const [type, setType] = useState("url");
   const [selectType, setSelectType] = useState("default");
   const formDataRef = useRef<any>(null);
   const [fileUpload, setFileUpload] = useState<any>();
+  const [resultFromCode, setResultFromCode] = useState("");
+  const resultPopupRef = useRef<any>(null);
   return (
     <div>
-      <AppPopup height={450} popupRef={formRef}>
+      <AppPopup height={750} popupRef={formRef}>
         <Form formData={data} ref={formDataRef}>
           <Item itemType="group" colCount={2} colSpan={2}>
             <Item
@@ -58,18 +66,31 @@ export const FormUpdateFile = (props: any) => {
                 value: type ? type : "url",
                 onValueChanged: (e: any) => {
                   setType(e.value);
+                  if (e.value === "html") {
+                    setSelectType("html");
+                  } else {
+                    setSelectType("default");
+                  }
                 },
               }}
             />
-            {type === "url" && (
+
+            {type !== "server" && (
               <Item
                 dataField="SelectType"
                 editorType="dxSelectBox"
                 editorOptions={{
-                  dataSource: dataSourceSelectType,
+                  dataSource:
+                    type === "html"
+                      ? dataSourceSelectTypeHtml
+                      : dataSourceSelectType,
                   displayExpr: "name",
                   valueExpr: "code",
-                  value: selectType ? selectType : "default",
+                  value: selectType
+                    ? selectType
+                    : type === "html"
+                    ? "html"
+                    : "default",
                   onValueChanged: (e: any) => {
                     setSelectType(e.value);
                   },
@@ -78,7 +99,63 @@ export const FormUpdateFile = (props: any) => {
             )}
             <Item dataField="Remarks" colSpan={2} />
 
-            {type !== "url" ? (
+            {type === "html" && selectType === "html_code" ? (
+              <Item
+                dataField="Path"
+                editorType="dxTextArea"
+                colSpan={2}
+                editorOptions={{ height: 450 }}
+              />
+            ) : selectType === "html" && type === "html" ? (
+              <Item
+                dataField="Path"
+                editorType="dxHtmlEditor"
+                colSpan={2}
+                editorOptions={{
+                  height: 450,
+                  toolbar: {
+                    items: [
+                      "font",
+                      "color",
+                      "bold",
+                      "italic",
+                      "underline",
+                      "alignCenter",
+                      "alignJustify",
+                      "alignLeft",
+                      "alignRight",
+                      "background",
+                      "blockquote",
+                      "bulletList",
+                      "clear",
+                      "codeBlock",
+                      "decreaseIndent",
+                      "deleteColumn",
+                      "deleteRow",
+                      "deleteTable",
+                      "header",
+                      "image",
+                      "increaseIndent",
+                      "insertColumnLeft",
+                      "insertColumnRight",
+                      "insertRowAbove",
+                      "insertRowBelow",
+                      "insertTable",
+                      "link",
+                      "orderedList",
+                      "separator",
+                      "size",
+                      "subscript",
+                      "superscript",
+                      "variable",
+                      "strike",
+                      "undo",
+                      "redo",
+                    ],
+                  },
+                }}
+              />
+            ) : type !== "url" ? (
               <Item
                 dataField="Path"
                 colSpan={2}
@@ -128,6 +205,20 @@ export const FormUpdateFile = (props: any) => {
               width: "50%",
             }}
           >
+            {selectType === "html_code" && (
+              <Button
+                style={{ marginRight: 10 }}
+                text={"Kết quả"}
+                type={"default"}
+                onClick={() => {
+                  let formData =
+                    formDataRef.current?.instance?.option("formData");
+                  let path = formData?.Path;
+                  setResultFromCode(path);
+                  resultPopupRef?.current?.instance?.show();
+                }}
+              />
+            )}
             <Button
               style={{ marginRight: 10 }}
               text={"Lưu"}
@@ -148,6 +239,9 @@ export const FormUpdateFile = (props: any) => {
             />
           </div>
         </div>
+      </AppPopup>
+      <AppPopup popupRef={resultPopupRef} height={500}>
+        <HtmlEditor value={resultFromCode} readOnly={true} height={400} />
       </AppPopup>
     </div>
   );
